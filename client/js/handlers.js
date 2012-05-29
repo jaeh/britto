@@ -70,7 +70,7 @@ Template.login.events = {
 
 Template.user_area.events = {
   'click #post-button, submit #post-button': makePost,
-  'change #post-title': changeTitle,
+  'change #post-title, keyup #post-title': slugifyInput,
   'change #date-control-group select': checkDate,
   'click .tag-remove-button, submit .tag-remove-form': removePostTag,
   'click .tag-add-button, submit .tag-add-form': addPostTag
@@ -114,7 +114,7 @@ Template.post_list.events = {
 Template.post_tags.events = {
   'click .tag-delete-button': deleteTag,
   'click #add-tag-submit, submit #add-tag': makeTag,
-  'change #tag-name, keyup #tag-name': changeTagName
+  'change #tag-name, keyup #tag-name': slugifyInput
 };
 
 Meteor.startup(function() {
@@ -256,19 +256,8 @@ function deletedPost(error, response) {
 }
 
 function changeTitle() {
-  slug = $('#post-title').val();
-  slug = slug.replace(/\s/g, '_').toLowerCase();
-  slug = replaceUmlaute(slug);
+  slug = slugify ($('#post-title').val());
   $('#post-slug').val(slug);
-}
-
-function replaceUmlaute(s) {
-  //TODO add greater support for all chars
-  //replace äüö with ae ue and oe for german titles
-  //later add support for more special chars defined in the admin interface
-  //removing the need of adding them all here and always test against those that we need to test against ;)
-  tr = {"\u00e4":"ae", "\u00fc":"ue", "\u00f6":"oe", "\u00df":"ss" }
-  return s.replace(/[\u00e4|\u00fc|\u00f6|\u00df]/g, function($0) { return tr[$0] });
 }
 
 function makePost(e) {
@@ -396,11 +385,6 @@ function deleteTag(e) {
   return false;
 }
 
-function changeTagName() {
-  slug = $('#tag-name').val();
-  $('#tag-slug').val(slug.replace(/\s/g, '_').toLowerCase());
-}
-
 function addPostTag(e) {
   e.preventDefault();
   if (Session.get('user')) {
@@ -425,4 +409,32 @@ function removePostTag(e) {
     return true;
   }
   return false;
+}
+
+
+
+function slugifyInput(e) {
+  target = $(e.target);
+  slugtarget = $('#'+target.attr('data-slug') );
+  
+  slug = slugify( target.val());
+  
+  slugtarget.val(slug);
+}
+
+
+function slugify(slug) {
+  
+  slug = slug.replace(/\s/g, '_').toLowerCase();
+
+  //replace äüö with ae ue and oe for german titles
+  //later add support for more special chars defined in the admin interface
+  //removing the need of adding them all here and always test against those that we need to test against ;)
+  tr = {"\u00e4":"ae", "\u00fc":"ue", "\u00f6":"oe", "\u00df":"ss" }
+  slug = slug.replace(/[\u00e4|\u00fc|\u00f6|\u00df]/g, function($0) { return tr[$0] });
+  
+  //remove all remaining specialchars
+  slug = slug.replace(/[^a-z0-9_]+/g,'');
+  
+  return slug;
 }
