@@ -109,8 +109,7 @@ Template.post_list.events = {
   'click .post-publish-button': publishPost,
   'click .post-unpublish-button': unpublishPost,
   //'change .orderby': changeOrderBy, //not now
-  'click .category-remove-button': removePostCategory,
-  'click .category-add-button': addPostCategory
+  'click .category-remove-button': removePostCategory
 };
 
 Template.post_categories.events = {
