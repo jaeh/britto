@@ -3,14 +3,16 @@
     <h2><a href="/blog/{{slug}}" >{{ title }}</a></h2>
     {{#better_markdown_escape body}}{{/better_markdown_escape}}
     
+    {{#if hasCategory _id}}
     <ul class="category-ul">
-      <li>Tagged with:</li>
-      {{#each postTags _id}}
+      <li>Categories:</li>
+      {{#each postCategories _id}}
       <li>
         <a href="/blog/category?show={{slug}}">{{name}}</a>
       </li>
       {{/each}}
     </ul>
+    {{/if}}
     <dl>
       <dt>Posted by</dt><dd>{{postUser author}}</dd>
       <dt>Created</dt><dd><time>{{date created}}</time></dd>
@@ -18,5 +20,5 @@
     {{#if user}}<button class="btn btn-primary delete-post" data-id="{{_id}}" >Delete post</button>{{/if}}
     {{#if user}}<button class="btn btn-primary edit-post" data-slug="{{slug}}" >Edit post</button>{{/if}}
   </article>
-  {{attach_event slug}}
+  {{attach_event _id}}
 </template>

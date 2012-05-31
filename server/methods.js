@@ -216,7 +216,7 @@ function createUser(vals) {
 }
 
 
-function publishPost ( args ) {
+function publishPost(args) {
   if(user = checkAuth(args.auth)) {
     Posts.update({slug: args.slug}, {$set: { published: args.published } } );
     return true;
@@ -224,7 +224,7 @@ function publishPost ( args ) {
   return false;
 }
 
-function unpublishPost ( args ) {
+function unpublishPost(args) {
   if(user = checkAuth(args.auth)) {
     Posts.update({slug: args.slug}, {$set: { published: args.published } } );
     return true;
@@ -235,7 +235,7 @@ function unpublishPost ( args ) {
 
 function makeCategory(args) {
   if(user = checkAuth(args.auth)) {
-    if ( args && args.slug && args.name ) {
+    if(args && args.slug && args.name) {
       category = Categories.findOne({slug: args.slug});
       categoryId = false;
       //TODO If the userchanges the slug, this will create a new category, Should fix at some point
@@ -264,7 +264,7 @@ function makeCategory(args) {
 
 function deleteCategory(args) {
   if(user = checkAuth(args.auth)) {
-    if ( args && args.categoryId ) {
+    if(args && args.categoryId) {
       Categories.remove({_id: args.categoryId});
       return true;
     }
@@ -275,11 +275,11 @@ function deleteCategory(args) {
 }
 
 
-function addPostCategory ( args ) {
-  if ( user = checkAuth(args.auth ) ) {
-    categoryInPost = CategoriesInPosts.findOne( { postId: args.postId, categoryId: args.categoryId } );
+function addPostCategory(args) {
+  if(user = checkAuth(args.auth)) {
+    categoryInPost = CategoriesInPosts.findOne({ postId: args.postId, categoryId: args.categoryId } );
     
-    if ( categoryInPost ) {
+    if(categoryInPost) {
       CategoriesInPosts.update( { _id: categoryInPost._id }, { $set: { categoryId: categoryInPost._id, postId: args.postId } } );
     }else {
       CategoriesInPosts.insert( { categoryId: args.categoryId, postId: args.postId } );
@@ -291,8 +291,8 @@ function addPostCategory ( args ) {
 }
 
 function removePostCategory ( args ) {
-  if ( user = checkAuth(args.auth ) ) {
-    category = CategoriesInPosts.findOne({ _id: args.postId}, { });
+  if(user = checkAuth(args.auth)) {
+    category = CategoriesInPosts.findOne({ _id: args.postId }, { } );
         
     CategoriesInPosts.remove( { postId: args.postId, categoryId: args.categoryId } );
     return true;

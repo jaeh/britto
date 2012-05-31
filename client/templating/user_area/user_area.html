@@ -71,26 +71,26 @@
         </div>
         {{#if _id}}
         <div class="control-group">
-          <label for="post-categories" class="control-label">Assigned Tags</label>
+          <label for="post-categories" class="control-label">Assigned Categories</label>
           <div class="controls">
             <ul class="categories-list" data-id="{{_id}}">
-              {{#each postTags _id}}
+              {{#each postCategories _id}}
               <li>
                 <a href="/blog/category?show={{slug}}">{{name}}</a>
-                <a class="category-remove-button" data-id="{{_id}}" title="remove category">x</a>
+                <button class="category-remove-button" data-id="{{_id}}" title="remove category">x</button>
               </li>
               {{/each}}
             </ul>
           </div>
         </div>
         <div class="control-group">
-          <label for="add-post-categories" class="control-label">Add Tags</label>
+          <label for="add-post-categories" class="control-label">Add Categories</label>
           <div class="controls">
             <ul class="categories-list" data-id="{{_id}}">
               {{#each allcategories}}
               <li>
                 <a href="/blog/category?show={{slug}}">{{name}}</a>
-                <a class="category-add-button" data-id="{{_id}}" title="add category to post">+</a>
+                <button class="category-add-button" data-id="{{_id}}" data-slug="{{slug}}" title="add category to post">+</button>
               </li>
               {{/each}}
             </ul>
@@ -99,7 +99,7 @@
         {{/if}}
         <div class="control-group">
           <label for="post-slug" class="control-label">Slug</label>
-          <div class="controls"><input type="text" id="post-slug" value="{{slug}}" /></div>
+          <div class="controls"><input type="text" id="post-slug" class="change-slug" value="{{slug}}" /></div>
         </div>
         <div class="form-actions">
           <button class="btn btn-primary" id="post-button" >Post</button>

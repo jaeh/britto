@@ -1,20 +1,20 @@
 Template.widgets.showSearch = function () {
   setting = Settings.findOne({key: 'show_search'});
-  if ( setting && setting.value ) {
+  if(setting && setting.value) {
     return setting.value;
   }
   return false;
 }
 Template.widgets.showBlogRoll = function () {
   setting = Settings.findOne({key: 'show_blogroll'});
-  if ( setting && setting.value ) {
+  if(setting && setting.value) {
     return setting.value;
   }
   return false;
 }
 Template.widgets.showCategoryCloud = function () {
   setting = Settings.findOne({key: 'show_categorycloud'});
-  if ( setting && setting.value ) {
+  if(setting && setting.value) {
     return setting.value;
   }
   return false;
@@ -51,7 +51,7 @@ Template.user_area_nav.user_is_logged_in = function () {
 //admin menu
 Template.user_area_nav.user_area_links = function () {
   //only show to logged in users
-  if (!Session.get('user')) {
+  if(!Session.get('user')) {
     return false;
   }
   //defining the menu items.
@@ -86,8 +86,8 @@ _.each(['postShort', 'post'], function(template) {
 });
 
 //list of comments for one post
-Template.comments.commentslist = function(post) {
-  comments = Comments.find({postId: post._id}, {sort: {created: 1}});
+Template.comments.commentslist = function(_id) {
+  comments = Comments.find({postId: _id}, {sort: {created: 1}});
   if(comments.count() === 0) {
     return false;
   }
@@ -198,7 +198,7 @@ _.each(['user_area', 'categorycloud'], function (template) {
       if ( lowest_count > count && count > 0 ) {
         lowest_count = count;
       }
-      returnCategory = { count: count, name: category.name, slug: category.slug};
+      returnCategory = { count: count, name: category.name, slug: category.slug, _id: category._id};
       categoriesWithCount.push(returnCategory);
     });    
     
@@ -217,7 +217,7 @@ _.each(['user_area', 'categorycloud'], function (template) {
         fontsize = 1;
       }
       
-      returnCategory = { fontsize: fontsize, name: category.name, slug: category.slug};
+      returnCategory = { fontsize: fontsize, name: category.name, slug: category.slug, _id: category._id};
       returnCategories.push(returnCategory);
     }
     return returnCategories;
