@@ -42,14 +42,14 @@
             </td>
       
         </tr>
-        {{#if hasTag _id}}
+        {{#if hasCategory _id}}
           <tr>
             <td colspan="4">
-              <ul class="tags-list" data-id="{{_id}}">
-                {{#each postTags _id}}
+              <ul class="categories-list" data-id="{{_id}}">
+                {{#each postCategory _id}}
                   <li>
-                    <a href="/blog/tag?show={{slug}}">{{name}}</a>
-                    <a title="remove tag" class="tag-remove-button" data-id="{{_id}}">x</a>
+                    <a href="/blog/category?show={{slug}}">{{name}}</a>
+                    <a title="remove category" class="category-remove-button" data-id="{{_id}}">x</a>
                   </li>
                 {{/each}}
               </ul>

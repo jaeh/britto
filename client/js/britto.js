@@ -26,8 +26,8 @@ Meteor.subscribe("allblogroll");
 //TODO change this to a per post subscription - removing it was killing the templates :/
 Meteor.subscribe("allcomments");
 Meteor.subscribe("allusers");
-Meteor.subscribe("alltags");
-Meteor.subscribe("alltagsinposts");
+Meteor.subscribe("allcategories");
+Meteor.subscribe("allcategoriesinposts");
 
 Britto.alert = function(type, message) {
   Stellar.log(message);

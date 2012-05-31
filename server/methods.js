@@ -17,10 +17,10 @@ Meteor.methods({
   insertBlogRoll: insertBlogRoll,
   publishPost: publishPost,
   unpublishPost: unpublishPost,
-  makeTag: makeTag,
-  deleteTag: deleteTag,
-  addPostTag: addPostTag,
-  removePostTag: removePostTag
+  makeCategory: makeCategory,
+  deleteCategory: deleteCategory,
+  addPostCategory: addPostCategory,
+  removePostCategory: removePostCategory
 });
 
 //TODO when minimogo adds in limit and so on, clear this function out its just a helper
@@ -233,14 +233,14 @@ function unpublishPost ( args ) {
 }
 
 
-function makeTag(args) {
+function makeCategory(args) {
   if(user = checkAuth(args.auth)) {
     if ( args && args.slug && args.name ) {
-      tag = Tags.findOne({slug: args.slug});
-      tagId = false;
-      //TODO If the userchanges the slug, this will create a new tag, Should fix at some point
-      if(tag) {
-        tagId = Tags.update({slug: args.slug}, 
+      category = Categories.findOne({slug: args.slug});
+      categoryId = false;
+      //TODO If the userchanges the slug, this will create a new category, Should fix at some point
+      if(category) {
+        categoryId = Categories.update({slug: args.slug}, 
           {$set: {
             name: args.name,
             slug: args.slug,
@@ -248,13 +248,13 @@ function makeTag(args) {
           } 
         });
       } else {
-        tagId = Tags.insert({
+        categoryId = Categories.insert({
           name: args.name,
           slug: args.slug,
           description: args.description
         });
       }
-      return tagId;
+      return categoryId;
     }
     return false;
   }
@@ -262,10 +262,10 @@ function makeTag(args) {
   return false;
 };
 
-function deleteTag(args) {
+function deleteCategory(args) {
   if(user = checkAuth(args.auth)) {
-    if ( args && args.tagId ) {
-      Tags.remove({_id: args.tagId});
+    if ( args && args.categoryId ) {
+      Categories.remove({_id: args.categoryId});
       return true;
     }
     return false;
@@ -275,14 +275,14 @@ function deleteTag(args) {
 }
 
 
-function addPostTag ( args ) {
+function addPostCategory ( args ) {
   if ( user = checkAuth(args.auth ) ) {
-    tagInPost = TagsInPosts.findOne( { postId: args.postId, tagId: args.tagId } );
+    categoryInPost = CategoriesInPosts.findOne( { postId: args.postId, categoryId: args.categoryId } );
     
-    if ( tagInPost ) {
-      TagsInPosts.update( { _id: tagInPost._id }, { $set: { tagId: tagInPost._id, postId: args.postId } } );
+    if ( categoryInPost ) {
+      CategoriesInPosts.update( { _id: categoryInPost._id }, { $set: { categoryId: categoryInPost._id, postId: args.postId } } );
     }else {
-      TagsInPosts.insert( { tagId: args.tagId, postId: args.postId } );
+      CategoriesInPosts.insert( { categoryId: args.categoryId, postId: args.postId } );
     }
     return true;
   }
@@ -290,11 +290,11 @@ function addPostTag ( args ) {
   return false;
 }
 
-function removePostTag ( args ) {
+function removePostCategory ( args ) {
   if ( user = checkAuth(args.auth ) ) {
-    tag = TagsInPosts.findOne({ _id: args.postId}, { });
+    category = CategoriesInPosts.findOne({ _id: args.postId}, { });
         
-    TagsInPosts.remove( { postId: args.postId, tagId: args.tagId } );
+    CategoriesInPosts.remove( { postId: args.postId, categoryId: args.categoryId } );
     return true;
   }
   throw new Meteor.Error(401, 'You are not logged in');

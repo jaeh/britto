@@ -571,16 +571,16 @@ nav.user-area-nav ul li a:hover {
   color: #fff;
 }
 
-.tags header h4{
+.categories header h4{
   margin: 0 0 10px;
   font-size: 1.1em;
 }
 
-/* TODO perhaps should resort to label that bootstrap uses for tags */
-ul.tags-list {
+/* TODO perhaps should resort to label that bootstrap uses for categories */
+ul.categories-list {
   margin-bottom:1em;
 }
-ul.tags-list li {
+ul.categories-list li {
   border: 1px solid;
   border-radius: 3px;
   display: inline;
@@ -589,31 +589,31 @@ ul.tags-list li {
   background-color: #fff;
 }
 
-ul.tags-list li input, ul.tags-list li a {
+ul.categories-list li input, ul.categories-list li a {
   padding: 0 3px;
   border: 0 none;
   background: transparent;
   cursor: pointer;
 }
 
-ul.tags-list li a.tag-remove-button,
-ul.tags-list li a.tag-add-button {
+ul.categories-list li a.category-remove-button,
+ul.categories-list li a.category-add-button {
   color: #000;
 }
 
-ul.tags-list form, ul.tags-list li {
+ul.categories-list form, ul.categories-list li {
   display: inline;
 }
 
-.tag-control {
+.category-control {
   margin: 10px 0 0;
 }
 
-.tag-ul {
+.category-ul {
   margin: 0 0 5px;
 }
 
-ul.tag-ul li {
+ul.category-ul li {
   display: inline;
   margin: 0;
 }
@@ -622,7 +622,7 @@ ul.tag-ul li {
   height: 65px;
 }
 
-ul.tag-cloud li {
+ul.category-cloud li {
   display: inline;
   margin: 0 2px;
 }

@@ -3,12 +3,12 @@
     <h2><a href="/blog/{{slug}}" >{{ title }}</a></h2>
     {{#short_content_escape slug body}}{{/short_content_escape}}
     
-    {{#if hasTag _id}}
-    <ul class="tag-ul">
-      <li>Tagged with:</li>
-      {{#each postTags _id}}
+    {{#if hasCategory _id}}
+    <ul class="category-ul">
+      <li>Categories:</li>
+      {{#each postCategories _id}}
       <li>
-        <a href="/blog/tag?show={{slug}}">{{name}}</a>
+        <a href="/blog/category?show={{slug}}">{{name}}</a>
       </li>
       {{/each}}
     </ul>

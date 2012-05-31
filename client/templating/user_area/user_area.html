@@ -71,26 +71,26 @@
         </div>
         {{#if _id}}
         <div class="control-group">
-          <label for="post-tags" class="control-label">Assigned Tags</label>
+          <label for="post-categories" class="control-label">Assigned Tags</label>
           <div class="controls">
-            <ul class="tags-list" data-id="{{_id}}">
+            <ul class="categories-list" data-id="{{_id}}">
               {{#each postTags _id}}
               <li>
-                <a href="/blog/tag?show={{slug}}">{{name}}</a>
-                <a class="tag-remove-button" data-id="{{_id}}" title="remove tag">x</a>
+                <a href="/blog/category?show={{slug}}">{{name}}</a>
+                <a class="category-remove-button" data-id="{{_id}}" title="remove category">x</a>
               </li>
               {{/each}}
             </ul>
           </div>
         </div>
         <div class="control-group">
-          <label for="add-post-tags" class="control-label">Add Tags</label>
+          <label for="add-post-categories" class="control-label">Add Tags</label>
           <div class="controls">
-            <ul class="tags-list" data-id="{{_id}}">
-              {{#each alltags}}
+            <ul class="categories-list" data-id="{{_id}}">
+              {{#each allcategories}}
               <li>
-                <a href="/blog/tag?show={{slug}}">{{name}}</a>
-                <a class="tag-add-button" data-id="{{_id}}" title="add tag to post">+</a>
+                <a href="/blog/category?show={{slug}}">{{name}}</a>
+                <a class="category-add-button" data-id="{{_id}}" title="add category to post">+</a>
               </li>
               {{/each}}
             </ul>

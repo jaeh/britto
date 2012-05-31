@@ -3,11 +3,11 @@
     <h2><a href="/blog/{{slug}}" >{{ title }}</a></h2>
     {{#better_markdown_escape body}}{{/better_markdown_escape}}
     
-    <ul class="tag-ul">
+    <ul class="category-ul">
       <li>Tagged with:</li>
       {{#each postTags _id}}
       <li>
-        <a href="/blog/tag?show={{slug}}">{{name}}</a>
+        <a href="/blog/category?show={{slug}}">{{name}}</a>
       </li>
       {{/each}}
     </ul>

@@ -5,8 +5,8 @@
   {{#if showBlogRoll}}
     {{>sidelinks}}
   {{/if}}
-  {{#if showTagCloud }}
-    {{>tagcloud}}
+  {{#if showCategoryCloud }}
+    {{>categorycloud}}
   {{/if}}
 </template>
 
@@ -17,12 +17,12 @@
   </form>
 </template>
 
-<template name="tagcloud">
+<template name="categorycloud">
   <div class="widget">
-    <h2>Tags</h2>
-    <ul class="tag-cloud">
-      {{#each alltags}}
-        <li><a href="/blog/tag?show={{slug}}" style="font-size:{{fontsize}}em;">{{name}}</a></li>
+    <h2>Categories</h2>
+    <ul class="category-cloud">
+      {{#each allcategorys}}
+        <li><a href="/blog/category?show={{slug}}" style="font-size:{{fontsize}}em;">{{name}}</a></li>
       {{/each}}
     </ul>
   </div>

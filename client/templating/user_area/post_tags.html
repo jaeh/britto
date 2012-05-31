@@ -1,39 +1,39 @@
-<template name="post_tags">
- <div id="tag-container">
-    <div class="tags">
-      <header><h4>All tags:</h4></header>
-      {{#with tags }}
-      <ul class="tags-list">
-        {{#each tags}}
+<template name="post_categories">
+ <div id="category-container">
+    <div class="categories">
+      <header><h4>All categories:</h4></header>
+      {{#with categories }}
+      <ul class="categories-list">
+        {{#each categories}}
           <li>
-            <a href="/blog/tag?show={{slug}}">{{name}}</a>
+            <a href="/blog/category?show={{slug}}">{{name}}</a>
             <form action="#" method="post">
-              <input class="tag-delete-button" data-id="{{_id}}" type="submit" value="x" title="delete tag" />
+              <input class="category-delete-button" data-id="{{_id}}" type="submit" value="x" title="delete category" />
             </form>
           </li>
         {{/each}}
       </ul>
       {{/with}}
     </div>
-    <div class="tag-control">
-      <form id="add-tag" class="form-horizontal" action="#" method="post">
+    <div class="category-control">
+      <form id="add-category" class="form-horizontal" action="#" method="post">
         <fieldset>
-          <legend>Add tag:</legend>
+          <legend>Add category:</legend>
         
           <div class="control-group">
               <label for="name" class="control-label">Name:</label>
-              <div class="controls"><input id="tag-name" type="text" name="name" value="" /></div>
+              <div class="controls"><input id="category-name" type="text" name="name" value="" /></div>
           </div>
           <div class="control-group">
             <label for="slug" class="control-label">Slug:</label>
-            <div class="controls"><input id="tag-slug" type="text" name="slug" value="" /></div>
+            <div class="controls"><input id="category-slug" type="text" name="slug" value="" /></div>
           </div>
           <div class="control-group">
             <label for="description" class="control-label">Description:</label>
-            <div class="controls"><textarea  id="tag-description" type="text" name="description"></textarea></div>
+            <div class="controls"><textarea  id="category-description" type="text" name="description"></textarea></div>
           </div>
           <div class="form-actions">
-            <button id="add-tag-submit" class="btn btn-primary">Add tag</button>
+            <button id="add-category-submit" class="btn btn-primary">Add category</button>
           </div>
         </fieldset>
       </form>

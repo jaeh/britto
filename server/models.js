@@ -33,10 +33,10 @@ Meteor.publish("allblogroll", function() {
   return BlogRoll.find({}, {fields: {}});
 });
 
-Meteor.publish("alltags", function() {
-  return Tags.find({}, {fields: {}});
+Meteor.publish("allcategories", function() {
+  return Categories.find({}, {fields: {}});
 });
 
-Meteor.publish("alltagsinposts", function () {
-  return TagsInPosts.find({}, {fields: {}});
+Meteor.publish("allcategoriesinposts", function () {
+  return CategoriesInPosts.find({}, {fields: {}});
 });

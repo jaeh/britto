@@ -72,8 +72,8 @@ Template.user_area.events = {
   'click #post-button, submit #post-button': makePost,
   'change #post-title': changeTitle,
   'change #date-control-group select': checkDate,
-  'click .tag-remove-button, submit .tag-remove-form': removePostTag,
-  'click .tag-add-button, submit .tag-add-form': addPostTag
+  'click .category-remove-button, submit .category-remove-form': removePostCategory,
+  'click .category-add-button, submit .category-add-form': addPostCategory
 };
 
 Template.settings.events = {
@@ -108,13 +108,13 @@ Template.post_list.events = {
   'click .post-publish-button': publishPost,
   'click .post-unpublish-button': unpublishPost,
   'change .orderby': changeOrderBy,
-  'click .tag-remove-button, submit .tag-remove-form': removePostTag
+  'click .category-remove-button, submit .category-remove-form': removePostCategory
 };
 
-Template.post_tags.events = {
-  'click .tag-delete-button': deleteTag,
-  'click #add-tag-submit, submit #add-tag': makeTag,
-  'change #tag-name, keyup #tag-name': changeTagName
+Template.post_categories.events = {
+  'click .category-delete-button': deleteCategory,
+  'click #add-category-submit, submit #add-category': makeCategory,
+  'change #category-name, keyup #category-name': changeCategoryName
 };
 
 Meteor.startup(function() {
@@ -363,66 +363,90 @@ function changeOrderBy(e) {
   });
 }
 
-function makeTag(e) {
+function makeCategory(e) {
   e.preventDefault();
   
   if (Session.get('user')) {
-    name = $('#tag-name').val();
-    slug = $('#tag-slug').val();
-    description = $('#tag-description').html();
-    Meteor.call( 'makeTag', { name: name, slug: slug, description: description, auth: Stellar.session.getKey() }, madeTag);
+    name = $('#category-name').val();
+    slug = $('#category-slug').val();
+    description = $('#category-description').html();
+    Meteor.call( 'makeCategory', { name: name, slug: slug, description: description, auth: Stellar.session.getKey() }, madeCategory);
   }
   return false;
 }
 
-function madeTag(error, response) {
+function madeCategory(error, response) {
   if(error) {
     return standardHandler(error, response);
   }
-  $('#tag-name').val('');
-  $('#tag-slug').val('');
-  $('#tag-description').html('');
+  $('#category-name').val('');
+  $('#category-slug').val('');
+  $('#category-description').html('');
 }
 
 
-function deleteTag(e) {
+function deleteCategory(e) {
   e.preventDefault();
-  if(Session.get('user') && confirm('Are you sure you want to delete this tag?')) {
+  if(Session.get('user') && confirm('Are you sure you want to delete this category?')) {
     target = e.target;
-    tagId = $(target).attr('data-id');
-    Meteor.call('deleteTag', {tagId: tagId, auth: Stellar.session.getKey() }, standardHandler);
+    categoryId = $(target).attr('data-id');
+    Meteor.call('deleteCategory', {categoryId: categoryId, auth: Stellar.session.getKey() }, standardHandler);
     return true;
   }
   return false;
 }
 
-function changeTagName() {
-  slug = $('#tag-name').val();
-  $('#tag-slug').val(slug.replace(/\s/g, '_').toLowerCase());
+function changeCategoryName() {
+  slug = $('#category-name').val();
+  $('#category-slug').val(slug.replace(/\s/g, '_').toLowerCase());
 }
 
-function addPostTag(e) {
+function addPostCategory(e) {
   e.preventDefault();
   if (Session.get('user')) {
     target = e.target;
-    tagId = $(e.target).attr('data-id');
-    postId = $('.tags-list').attr('data-id');
-    Meteor.call('addPostTag', { postId: postId, tagId: tagId, auth: Stellar.session.getKey()}, standardHandler);
+    categoryId = $(e.target).attr('data-id');
+    postId = $('.categories-list').attr('data-id');
+    Meteor.call('addPostCategory', { postId: postId, categoryId: categoryId, auth: Stellar.session.getKey()}, standardHandler);
     return true;
   }
   return false;
 }
 
-//removes a tag from a post
-function removePostTag(e) {
+//removes a category from a post
+function removePostCategory(e) {
   e.preventDefault();
-  if (Session.get('user') && confirm('Do you really want to remove this Tag from this Post?')) {
+  if (Session.get('user') && confirm('Do you really want to remove this Category from this Post?')) {
     target = e.target;
-    tagId = $(e.target).attr('data-id');
-    postId = $('.tags-list').attr('data-id');
+    categoryId = $(e.target).attr('data-id');
+    postId = $('.categories-list').attr('data-id');
     
-    Meteor.call('removePostTag', {postId: postId, tagId: tagId, auth: Stellar.session.getKey()}, standardHandler);
+    Meteor.call('removePostCategory', {postId: postId, categoryId: categoryId, auth: Stellar.session.getKey()}, standardHandler);
     return true;
   }
   return false;
+}
+
+
+function slugifyInput(e) {
+  target = $(e.target);
+  slug = slugify( target.val());
+  $('input.change-slug').val(slug);
+}
+
+function slugify(slug) {
+   slug = slug.replace(/\s/g, '_').toLowerCase();
+   
+  //replace äüö with ae ue and oe for german titles
+  //later add support for more special chars defined in the admin interface 
+  //removing the need of adding them all here and always test against those that we need to test against ;)
+  
+  tr = {"\u00e4":"ae", "\u00fc":"ue", "\u00f6":"oe", "\u00df":"ss" }
+  
+  slug = slug.replace(/[\u00e4|\u00fc|\u00f6|\u00df]/g, function($0) { return tr[$0] });
+  
+  //remove all remaining specialchars 
+  slug= slug.replace(/[^a-z0-9_]+/g,'');
+  
+  return slug;
 }

@@ -9,7 +9,7 @@ Meteor.startup(function () {
   //add widget settings
   setSetting('show_search', true, 'Show search widget');
   setSetting('show_blogroll', true, 'Show blogroll widget');
-  setSetting('show_tagcloud', false, 'Show tagcloud widget');
+  setSetting('show_categorycloud', false, 'Show categorycloud widget');
   
   
   if(Users.find().count() === 0) {
@@ -21,13 +21,13 @@ Meteor.startup(function () {
     var user = loginUser('admin', 'password');
     var key = user.auth;
     
-    console.log('adding tag categories');
-    tagId1 = makeTag({name: 'Tag 1', slug: 'tag_1', description: '', auth: key });
-    tagId2 = makeTag({name: 'Tag 2', slug: 'tag_2', description: '', auth: key });
-    tagId3 = makeTag({name: 'Tag 3', slug: 'tag_3', description: '', auth: key });
-    console.log(Tags.find().count()+' tags added');
+    console.log('adding categories');
+    categoryId1 = makeCategory({name: 'Category 1', slug: 'category_1', description: '', auth: key });
+    categoryId2 = makeCategory({name: 'Category 2', slug: 'category_2', description: '', auth: key });
+    categoryId3 = makeCategory({name: 'Category 3', slug: 'category_3', description: '', auth: key });
+    console.log(Categories.find().count()+' categories added');
     
-    tags = Tags.find({}, {fields: {_id:1} }).fetch();
+    categories = Categories.find({}, {fields: {_id:1} }).fetch();
     
     console.log('Adding in blogroll link');
     insertBlogRoll({ name: 'Britto - Blogging made better', link: 'http://britto.co/', auth: key});
@@ -67,12 +67,12 @@ Meteor.startup(function () {
         created: new Date()
     });
     
-    addPostTag({postId: postId1, tagId: tagId1, auth: key});
-    addPostTag({postId: postId2, tagId: tagId2, auth: key});
-    addPostTag({postId: postId3, tagId: tagId3, auth: key});
-    addPostTag({postId: postId3, tagId: tagId1, auth: key});
+    addPostCategory({postId: postId1, categoryId: categoryId1, auth: key});
+    addPostCategory({postId: postId2, categoryId: categoryId2, auth: key});
+    addPostCategory({postId: postId3, categoryId: categoryId3, auth: key});
+    addPostCategory({postId: postId3, categoryId: categoryId1, auth: key});
     
-    console.log("Added "+TagsInPosts.find().count()+ " post tags to the posts");
+    console.log("Added "+CategoriesInPosts.find().count()+ " post categories to the posts");
     
     console.log('Log out test user');
     logoutSession(key);

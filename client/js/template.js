@@ -12,8 +12,8 @@ Template.widgets.showBlogRoll = function () {
   }
   return false;
 }
-Template.widgets.showTagCloud = function () {
-  setting = Settings.findOne({key: 'show_tagcloud'});
+Template.widgets.showCategoryCloud = function () {
+  setting = Settings.findOne({key: 'show_categorycloud'});
   if ( setting && setting.value ) {
     return setting.value;
   }
@@ -59,7 +59,7 @@ Template.user_area_nav.user_area_links = function () {
   user_area_links = [
     {url: '/user_area/posts', text: 'Posts'},
     {url: '/user_area', text: '&nbsp;&nbsp;New Post'}, //TODO make sub pages here and neaten up, this path should be /user_area/posts/new but that needs a change in stellar :/
-    {url: '/user_area/post_tags', text: '&nbsp;&nbsp;Tags'},
+    {url: '/user_area/post_categories', text: '&nbsp;&nbsp;Categories'},
     {url: '/user_area/users', text: 'Users'},
     {url: '/user_area/options', text: 'Options'},
     {url: '/user_area/settings', text: 'Settings'}
@@ -131,26 +131,26 @@ _.each(['postShort', 'post', 'postView', 'post_list', 'user_area'], function(tem
     return false;
   }
   
-  Template[template].hasTag = function ( postId ) {
-    tagCount = TagsInPosts.find( { postId: postId} ).count()
-    if ( !tagCount || tagCount == 0 ) {
+  Template[template].hasCategory = function ( postId ) {
+    categoryCount = CategoriesInPosts.find( { postId: postId} ).count()
+    if ( !categoryCount || categoryCount == 0 ) {
       return false;
     }
-    return  tagCount > 0;
+    return  categoryCount > 0;
   }
   
-  Template[template].postTags = function( postId ) {
-    tagsInPost = TagsInPosts.find( { postId: postId }, {fields: { tagId: 1 } } );
+  Template[template].postCategories = function( postId ) {
+    categoriesInPost = CategoriesInPosts.find( { postId: postId }, {fields: { categoryId: 1 } } );
     
-    tagIds = [];
-    tagsInPost.forEach ( function ( tag ) {
-      tagIds.push ( tag.tagId );
+    categoryIds = [];
+    categoriesInPost.forEach ( function ( category ) {
+      categoryIds.push ( category.categoryId );
     });
     
-    tags = Tags.find({ _id: { $in: tagIds } }, {fields: { name: 1, slug: 1 }});
+    categories = Categories.find({ _id: { $in: categoryIds } }, {fields: { name: 1, slug: 1 }});
     
-    if ( tags ) {
-      return tags;
+    if ( categories ) {
+      return categories;
     } else {
       return false;
     }
@@ -179,36 +179,36 @@ Template.user_area.userlist = function () {
   return Users.find({}, { fields: { name: 1, _id: 1 } });
 }
 
-_.each(['user_area', 'tagcloud'], function (template) {
-  Template[template].alltags = function(){
+_.each(['user_area', 'categorycloud'], function (template) {
+  Template[template].allcategories = function(){
     
-    tags = Tags.find({}, { fields: { name: 1, slug: 1, _id: 1 } });
+    categories = Categories.find({}, { fields: { name: 1, slug: 1, _id: 1 } });
 
     //this should be moved somewhere else or be cached, pretty intensely hitting the database here i guess
     counts = [];
     highest_count = 0;
     lowest_count = 1000;
     
-    tagsWithCount = [];
-    tags.forEach(function(tag){
-      count = TagsInPosts.find({ tagId: tag._id }).count();
+    categoriesWithCount = [];
+    categories.forEach(function(category){
+      count = CategoriesInPosts.find({ categoryId: category._id }).count();
       if ( highest_count < count ) {
         highest_count = count;
       }
       if ( lowest_count > count && count > 0 ) {
         lowest_count = count;
       }
-      returnTag = { count: count, name: tag.name, slug: tag.slug};
-      tagsWithCount.push(returnTag);
+      returnCategory = { count: count, name: category.name, slug: category.slug};
+      categoriesWithCount.push(returnCategory);
     });    
     
     
-    returnTags = [];
-    for (var i = 0; i < tagsWithCount.length; i++ ){
+    returnCategories = [];
+    for (var i = 0; i < categoriesWithCount.length; i++ ){
       
-      tag = tagsWithCount[i];
+      category = categoriesWithCount[i];
       
-      fontsize = tag.count / ( highest_count - lowest_count );
+      fontsize = category.count / ( highest_count - lowest_count );
       //TODO This should be classes
       if ( fontsize > 1.4 ) {
         fontsize = 1.4;
@@ -217,10 +217,10 @@ _.each(['user_area', 'tagcloud'], function (template) {
         fontsize = 1;
       }
       
-      returnTag = { fontsize: fontsize, name: tag.name, slug: tag.slug};
-      returnTags.push(returnTag);
+      returnCategory = { fontsize: fontsize, name: category.name, slug: category.slug};
+      returnCategories.push(returnCategory);
     }
-    return returnTags;
+    return returnCategories;
   }
 });
 
