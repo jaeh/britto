@@ -111,17 +111,10 @@ Template.post_list.events = {
   'click .category-remove-button, submit .category-remove-form': removePostCategory
 };
 
-<<<<<<< HEAD
 Template.post_categories.events = {
   'click .category-delete-button': deleteCategory,
   'click #add-category-submit, submit #add-category': makeCategory,
   'change #category-name, keyup #category-name': changeCategoryName
-=======
-Template.post_tags.events = {
-  'click .tag-delete-button': deleteTag,
-  'click #add-tag-submit, submit #add-tag': makeTag,
-  'change #tag-name, keyup #tag-name': slugifyInput
->>>>>>> 2a1c94dad53da4f5dac4bc0bbbd69f6c07b56b78
 };
 
 Meteor.startup(function() {
@@ -392,16 +385,12 @@ function deleteCategory(e) {
   return false;
 }
 
-<<<<<<< HEAD
 function changeCategoryName() {
   slug = $('#category-name').val();
   $('#category-slug').val(slug.replace(/\s/g, '_').toLowerCase());
 }
 
 function addPostCategory(e) {
-=======
-function addPostTag(e) {
->>>>>>> 2a1c94dad53da4f5dac4bc0bbbd69f6c07b56b78
   e.preventDefault();
   if (Session.get('user')) {
     target = e.target;
@@ -428,7 +417,6 @@ function removePostCategory(e) {
 }
 
 
-<<<<<<< HEAD
 function slugifyInput(e) {
   target = $(e.target);
   slug = slugify( target.val());
@@ -448,31 +436,6 @@ function slugify(slug) {
   
   //remove all remaining specialchars 
   slug= slug.replace(/[^a-z0-9_]+/g,'');
-=======
-
-function slugifyInput(e) {
-  target = $(e.target);
-  slugtarget = $('#'+target.attr('data-slug') );
-  
-  slug = slugify( target.val());
-  
-  slugtarget.val(slug);
-}
-
-
-function slugify(slug) {
-  
-  slug = slug.replace(/\s/g, '_').toLowerCase();
-
-  //replace äüö with ae ue and oe for german titles
-  //later add support for more special chars defined in the admin interface
-  //removing the need of adding them all here and always test against those that we need to test against ;)
-  tr = {"\u00e4":"ae", "\u00fc":"ue", "\u00f6":"oe", "\u00df":"ss" }
-  slug = slug.replace(/[\u00e4|\u00fc|\u00f6|\u00df]/g, function($0) { return tr[$0] });
-  
-  //remove all remaining specialchars
-  slug = slug.replace(/[^a-z0-9_]+/g,'');
->>>>>>> 2a1c94dad53da4f5dac4bc0bbbd69f6c07b56b78
   
   return slug;
 }
