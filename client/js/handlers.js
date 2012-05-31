@@ -118,7 +118,6 @@ Template.post_categories.events = {
   'change #category-name, keyup #category-name': slugifyInput,
   'change .change-slug, keyup .change-slug': slugifyInput,
 };
-
 Meteor.startup(function() {
   //This is a helper function for the page to keep state between refresh
   if(!Session.get('user') && Stellar.session.getKey()) {
