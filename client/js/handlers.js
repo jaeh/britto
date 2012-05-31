@@ -394,9 +394,9 @@ function changeCategoryName() {
 function addPostCategory(e) {
   e.preventDefault();
   if(Session.get('user')) {
-    target = e.target;
-    categoryId = $(e.target).attr('data-id');
-    postId = $('.categories-list').attr('data-id');
+    target = $(e.target);
+    categoryId = target.attr('data-id');
+    postId = target.parent('li').parent('ul').attr('data-id');
     Meteor.call('addPostCategory', { postId: postId, categoryId: categoryId, auth: Stellar.session.getKey()}, standardHandler);
     return true;
   }
@@ -407,10 +407,9 @@ function addPostCategory(e) {
 function removePostCategory(e) {
   e.preventDefault();
   if(Session.get('user') && confirm('Do you really want to remove this Category from this Post?')) {
-    target = e.target;
-    categoryId = $(e.target).attr('data-id');
-    postId = $('.categories-list').attr('data-id');
-    
+    target = $(e.target);
+    categoryId = target.attr('data-id');
+    postId = target.parent('li').parent('ul').attr('data-id');
     Meteor.call('removePostCategory', {postId: postId, categoryId: categoryId, auth: Stellar.session.getKey()}, standardHandler);
     return true;
   }
