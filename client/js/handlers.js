@@ -116,8 +116,15 @@ Template.post_categories.events = {
   'click .category-delete-button': deleteCategory,
   'click #add-category-submit, submit #add-category': makeCategory,
   'change #category-name, keyup #category-name': slugifyInput,
-  'change .change-slug, keyup .change-slug': slugifyInput,
+  'change .change-slug, keyup .change-slug': slugifyInput
 };
+
+Template.datePicker.events = {
+  //this could be much nicer, but <select> and <option> dont support mouseover, not even when using jquery :(
+  //'hover .post-year-option select': loadMoreYears,
+  'change .post-month-select': getDaysInMonth
+}
+
 Meteor.startup(function() {
   //This is a helper function for the page to keep state between refresh
   if(!Session.get('user') && Stellar.session.getKey()) {
@@ -135,10 +142,10 @@ function changeSetting(e) {
       function(input) { 
         val = $(this).val();
         //checkbox select to bool mapping
-        if ( $(this).attr('type') == 'checkbox' ) {
-          if ( $(this).attr('checked') ) {
+        if($(this).attr('type') == 'checkbox') {
+          if($(this).attr('checked')) {
             val = true;
-          } else {
+          }else{
             val = false;
           }
         }
@@ -416,26 +423,49 @@ function removePostCategory(e) {
   return false;
 }
 
+//handle the calculation of the number of days in a month for the datePicker template
+function getDaysInMonth(e) {
+  target = $(e.target);
+  
+  //add +1 to get the next month
+  month = parseInt(target.val()) + 1;
+  
+  //set the month to 0 if it exceeds the max
+  if(month > 12) {
+    month -= 12;
+  }
+  
+  //get the year from the html form
+  year = $('.post-year-select option:selected').val();
+  //get the number of days in this month by querying the 0th day of the next month
+  lastDayInMonth = new Date(year, month, 0).getDate();
+  
+  //fill the days array with the days for the <option> html element
+  option_list = '';
+  for(var i = 1; i <= lastDayInMonth; i++) {
+    option_list += '<option value="'+i+'">'+i+'</option>';
+  }
+  $('.post-day-select').html(option_list);
+}
 
 function slugifyInput(e) {
-  target = $(e.target);
-  slug = slugify( target.val());
-  $('input.change-slug').val(slug);
+  //populate the change-slug input with the slugified title
+  $('input.change-slug').val(slugify($(e.target).val()));
 }
 
 function slugify(slug) {
+  //first replace spaces with underscores and lowercase the slug
    slug = slug.replace(/\s/g, '_').toLowerCase();
    
   //replace äüö with ae ue and oe for german titles
-  //later add support for more special chars defined in the admin interface 
-  //removing the need of adding them all here and always test against those that we need to test against ;)
-  
+  //later add support for more/other special chars defined in the admin interface 
+  //removing the need of adding them all here and always test against those that we need to test against
   tr = {"\u00e4":"ae", "\u00fc":"ue", "\u00f6":"oe", "\u00df":"ss" }
-  
   slug = slug.replace(/[\u00e4|\u00fc|\u00f6|\u00df]/g, function($0) { return tr[$0] });
   
-  //remove all remaining specialchars 
-  slug= slug.replace(/[^a-z0-9_]+/g,'');
+  //remove all remaining specialchars, i dont like multiple underscores, so replace with nothing?
+  slug = slug.replace(/[^a-z0-9_]+/g, '');
   
   return slug;
 }
+

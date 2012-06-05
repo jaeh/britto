@@ -225,82 +225,77 @@ _.each(['user_area', 'categorycloud'], function (template) {
 });
 
 //TODO neaten this method, needs explanation too
-Template.user_area.dates = function () {
+//this method enables the input of a date when creating a new post
+//it also shows days, monthnames and a selection of years as well as minutes and seconds
+Template.datePicker.dates = function () {
   dates = {};
-  //first get now
+  
+  //first get now to have a reference
   now = new Date();
   
-  created = now;
-  
+  created = {};
+  //if there is a .id in the url params get the date of the post with that slug
   if(params.id) {
+    //get the date of the post with that id
     created = Posts.find({ slug: params.id }, { fields: { created: 1 } });
   }
   
+  //check that created.created really is a date
   if(created && created.created && !isNaN(created.created.getTime())) {
     now = created.created;
   }
+  
+  
+  //populate the year html selectbox with these
+  dates.years = [];
+  //posts are possible between 1990 and 5 years in the future
+  //TODO -> first and last select should be buttons that add more years on hover or click
   year = now.getFullYear();
   
-  //setting the years:
-  years = [];
-  yearmax = year + 5;
-  for(var i = 1990; i < yearmax; i++) {
-    selected = is_selected(i, year );
-    years.push({ year: i, selected: selected });
+  //push a value into the first element of the year array
+  dates.years.push({year: 'load past', selected: false});
+  for(var i = 1990; i < (year + 5); i++) {
+    dates.years.push({ year: i, selected: i == year });
   }
-  dates.years = years;
+  dates.years.push({year: 'load future', selected: false});
   
-  //setting the month
-  months = [];
+  //setting the months for the <select>s
+  dates.months = [];
   for(var i = 0; i < 12; i++) {
-    selected = is_selected( i, now.getMonth() );
-    months.push ( {monthnum: i, monthname: getMonthName(i), selected: selected} );
-  } 
-  dates.months = months;
+    dates.months.push({monthnum: i, monthname: getMonthName(i), selected: i == now.getMonth() });
+  }
   
-  //setting the days for the current month
-  days = [];
-  //setting plus 1 to get the 0 day of the next month (last day of this month)
-  monthForDay = now.getMonth() +1;
-  //day 0 actually is the last day of the previous month
+  //setting plus 1 to be able to get the 0 day of the next month (which is the last day of this month in js)
+  monthForDay = now.getMonth() + 1;
+  //this (ab)use of the javascript Date() method tells us the last day of this month. 
+  // TODO -> make this change when the user selects another month, for now every month will have as many days as the first selected month
+  lastDayInMonth = new Date(now.getFullYear(), monthForDay, 0).getDate();
   
-  lastDayInMonth = new Date( now.getFullYear(), monthForDay, 0 ).getDate();
-  
+  //fill the days array with the days for the <option>
+  dates.days = [];
   for(var i = 1; i <= lastDayInMonth; i++) {
-    selected = is_selected(i, now.getDate() );
-    days.push({ day: i, selected: selected });
+    dates.days.push({ day: i, selected: i == now.getDate() });
   }
-  dates.days = days;
   
-  //adding hours
-  hours = [];
+  //adding the 24 hours
+  dates.hours = [];
   for(var i = 0; i < 24; i++) {
-    selected = is_selected(i, now.getHours() );
-    hours.push({hour: i, selected: selected });
+    dates.hours.push({hour: i, selected: i == now.getHours() });
   }
-  dates.hours = hours;
   
-  //adding minutes and seconds
-  minutes = [];
+  //adding minutes
+  dates.minutes = [];
   for ( var i = 0; i < 60; i++ ) {
-    selected = is_selected(i, now.getMinutes() );
-    
-    minutes.push({ minute: i, selected: selected });
+    dates.minutes.push({ minute: i, selected: i == now.getMinutes() });
   }
-  dates.minutes = minutes;
   
+  //to use the dates interface somewhere in the theme {{>datePicker}} 
   return dates;
 }
 
-function is_selected(i, now) {
-  if ( i == now ) {
-    return true;
-  }
-  return false;
-}
-
+//transform month int to the name of the month
 function getMonthName(month) {
-  //maybe add this to the admin later, formatting of the date string as well as monthnames.
+  //maybe add these names to the admin later, formatting of the date string as well as monthnames.
   var m = ['January','February','March','April','May','June','July', 'August','September','October','November','December'];
   return m[month];
 }
