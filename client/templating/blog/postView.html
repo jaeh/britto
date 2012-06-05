@@ -2,7 +2,7 @@
   <section class="postView">
     {{#with post}}
       {{>post}}
-      {{#if commentsEnabled}}
+      {{#if showComments}}
         {{#if disqus}}
           <div id="disqus_thread"></div>
         {{else}}

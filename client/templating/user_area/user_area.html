@@ -6,12 +6,14 @@
       <fieldset>
         {{#with post}}
         <legend>Make a post</legend>
+        
         <div class="control-group">
           <label for="post-title" class="control-label">Title</label>
           <div class="controls"><input data-slug="post-slug" type="text" id="post-title" value="{{title}}" /></div>
         </div>
+        
         {{#with userlist}}
-         <div class="control-group">
+        <div class="control-group">
           <label for="post-author" class="control-label">Author</label>
           <div class="controls">
             <select id="post-author">
@@ -22,6 +24,7 @@
           </div>
         </div>
         {{/with}}
+        
         <div class="control-group">
           <label for="post-published" class="control-label">Publish Post:</label>
           <div class="controls">
@@ -29,11 +32,14 @@
             <span>If date is in the future and publish is checked, the post will be published at that date</span>
           </div>
         </div>
-       {{>datePicker}}
+        
+        {{>datePicker}}
+        
         <div class="control-group">
           <label for="post-body" class="control-label">Body</label>
           <div class="controls"><textarea id="post-body" style="width:100%; height:300px;">{{body}}</textarea></div>
         </div>
+        
         {{#if _id}}
         <div class="control-group">
           <label for="post-categories" class="control-label">Assigned Categories</label>
@@ -62,15 +68,19 @@
           </div>
         </div>
         {{/if}}
+        
         <div class="control-group">
           <label for="post-slug" class="control-label">Slug</label>
           <div class="controls"><input type="text" id="post-slug" class="change-slug" value="{{slug}}" /></div>
         </div>
+        
         <div class="control-group">
-          <label for="post-commentsenabled" class="control-label">Enable Comments:</label>
-          <div class="controls"><input id="post-commentsenabled" type="checkbox" {{#if commentsEnabled}}checked {{/if}}/></div>
+          <label for="post-showcomments" class="control-label">Enable Comments:</label>
+          <div class="controls"><input id="post-showcomments" type="checkbox" {{#if showComments}}checked {{/if}}/></div>
         </div>
+        
         <div class="form-actions">
+          {{#if _id}}<input id="post-id" type="hidden" value="{{_id}}" />{{/if}}
           <button class="btn btn-primary" id="post-button" >Post</button>
         </div>
         {{/with}}

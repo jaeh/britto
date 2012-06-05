@@ -42,7 +42,7 @@ Meteor.startup(function () {
         author: userId, 
         published: true, 
         created: new Date(),
-        commentsEnabled: true
+        showComments: true
     });
     
     //Make a long post now
@@ -55,7 +55,7 @@ Meteor.startup(function () {
         author: userId, 
         published: true, 
         created: new Date(),
-        commentsEnabled: true
+        showComments: true
     });
     
     console.log('Adding in test post3 - this should not be shown');
@@ -67,7 +67,7 @@ Meteor.startup(function () {
         author: userId2, 
         published: false, 
         created: new Date(),
-        commentsEnabled: false
+        showComments: false
     });
     
     addPostCategory({postId: postId1, categoryId: categoryId1, auth: key});

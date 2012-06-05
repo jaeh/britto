@@ -1,12 +1,3 @@
-//create post callback
-function madePost(error, response) {
-  if(!error) {
-    Stellar.redirect('/');
-  } else {
-    return standardHandler(error, response);
-  }
-}
-
 function loginCallback(error, returnVal) {
   if(!error) {
     Stellar.session.updateKey(returnVal.auth);
@@ -143,11 +134,7 @@ function changeSetting(e) {
         val = $(this).val();
         //checkbox select to bool mapping
         if($(this).attr('type') == 'checkbox') {
-          if($(this).attr('checked')) {
-            val = true;
-          }else{
-            val = false;
-          }
+          val = $(this).attr('checked') == 'checked';
         }
         
         settings.push([$(this).attr('data-key'), val]);
@@ -270,17 +257,51 @@ function changeTitle() {
 
 function makePost(e) {
   e.preventDefault();
-  author = $('select#post-author option').filter(':selected').val();
+  //these should all be sanitized in all functions?
+  author = $('select#post-author option:selected').val();
+  
   published = $('#post-published').attr('checked') == 'checked';
-  commentsEnabled = $('#post-comments-enabled').attr('checked') == 'checked';
+  showComments = $('#post-showcomments').attr('checked') == 'checked';
+  
+  title = $('#post-title').val();
+  body = $('#post-body').val();
+  slug = slugify($('#post-slug').val());
+  
+  _id = $('#post-id').val();
+  
   created = new Date( $('#post-year').val(), $('#post-month').val(), $('#post-day').val(), $('#post-hour').val(), $('#post-minute').val() );
-  date = new Date();
+  if(isNaN(created)) {
+    created = new Date();
+  }
   
   if(Session.get('user')) {
-    Meteor.call('post', {title: $('#post-title').val(), body: $('#post-body').val(), slug: $('#post-slug').val(), commentsEnabled: commentsEnabled, auth: Stellar.session.getKey(), author: author, published: published, created: created }, madePost);
+    Meteor.call('post', {
+        title: title,
+        body: body,
+        slug: slug,
+        showComments: showComments,
+        auth: Stellar.session.getKey(),
+        author: author,
+        published: published,
+        created: created,
+        _id: _id
+      },
+      madePost
+    );
   }
   return false;
 }
+
+//create post callback
+function madePost(error, response) {
+  if(!error) {
+    //redirect to the admin post list
+    Stellar.redirect('/user_area/posts');
+  } else {
+    return standardHandler(error, response);
+  }
+}
+
 
 function doLogin(e) {
   e.preventDefault();

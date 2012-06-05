@@ -137,19 +137,24 @@ function sessionUser(key) {
 
 function makePost(args) {
   if(user = checkAuth(args.auth)) {
-    post = Posts.findOne({slug: args.slug}, { fields:  { _id: 1 } } );
+    post = Posts.findOne({_id: args._id}, { fields:  { _id: 1 } } );
     postId = false;
     created = new Date(args.created);
     
+    if ( !args.author || args.author == '' ) {
+      args.author = user._id;
+    }
+    
     //TODO If the user changes the slug, this will create a new post, Should fix at some point
     if(post) {
-      postId = Posts.update({slug: args.slug}, {$set: {
+      postId = Posts.update({_id: post._id}, {$set: {
           title: args.title,
+          slug: args.slug,
           body: args.body,
           author: args.author,
           published: args.published,
-          commentsEnabled: args.commentsEnabled
-        } 
+          showComments: args.showComments
+        }
       });
     } else {
       postId = Posts.insert({
@@ -160,14 +165,13 @@ function makePost(args) {
         author: args.author,
         published: args.published,
         created: created,
-        commentsEnabled: args.commentsEnabled
+        showComments: args.showComments
       });
     }
     return postId;
   }
   return false;
 };
-    
 
 function insertBlogRoll(args) {
   if(user = checkAuth(args.auth)) {
@@ -178,6 +182,7 @@ function insertBlogRoll(args) {
     });
     return true;
   }
+  throw new Meteor.Error(401, 'You are not logged in');
   return false;
 }
 
