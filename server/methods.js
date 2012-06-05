@@ -147,7 +147,8 @@ function makePost(args) {
           title: args.title,
           body: args.body,
           author: args.author,
-          published: args.published
+          published: args.published,
+          commentsEnabled: args.commentsEnabled
         } 
       });
     } else {
@@ -158,7 +159,8 @@ function makePost(args) {
         userId: user._id,
         author: args.author,
         published: args.published,
-        created: created
+        created: created,
+        commentsEnabled: args.commentsEnabled
       });
     }
     return postId;

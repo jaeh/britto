@@ -272,11 +272,12 @@ function makePost(e) {
   e.preventDefault();
   author = $('select#post-author option').filter(':selected').val();
   published = $('#post-published').attr('checked') == 'checked';
+  commentsEnabled = $('#post-comments-enabled').attr('checked') == 'checked';
   created = new Date( $('#post-year').val(), $('#post-month').val(), $('#post-day').val(), $('#post-hour').val(), $('#post-minute').val() );
   date = new Date();
   
   if(Session.get('user')) {
-    Meteor.call('post', {title: $('#post-title').val(), body: $('#post-body').val(), slug: $('#post-slug').val(), auth: Stellar.session.getKey(), author: author, published: published, created: created }, madePost);
+    Meteor.call('post', {title: $('#post-title').val(), body: $('#post-body').val(), slug: $('#post-slug').val(), commentsEnabled: commentsEnabled, auth: Stellar.session.getKey(), author: author, published: published, created: created }, madePost);
   }
   return false;
 }

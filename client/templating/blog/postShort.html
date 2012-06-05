@@ -17,12 +17,14 @@
       <dt>Posted by</dt><dd>{{postUser userId}}</dd>
 
       <dt>Created</dt><dd><time>{{date created}}</time></dd>
-      {{#if disqus}}
-        {{#disqus_link slug}}{{/disqus_link}}
-      {{else}}
-        <dt>Comments</dt><dd>
-         <a href="/blog/{{slug}}" >{{commentCount _id}}</a>
-        </dd>
+      {{#if commentsEnabled}}
+        {{#if disqus}}
+          {{#disqus_link slug}}{{/disqus_link}}
+        {{else}}
+          <dt>Comments</dt><dd>
+           <a href="/blog/{{slug}}" >{{commentCount _id}}</a>
+          </dd>
+        {{/if}}
       {{/if}}
     </dl>
   </article>

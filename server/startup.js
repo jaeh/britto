@@ -41,7 +41,8 @@ Meteor.startup(function () {
         auth: key, 
         author: userId, 
         published: true, 
-        created: new Date()
+        created: new Date(),
+        commentsEnabled: true
     });
     
     //Make a long post now
@@ -53,7 +54,8 @@ Meteor.startup(function () {
         auth: key, 
         author: userId, 
         published: true, 
-        created: new Date()
+        created: new Date(),
+        commentsEnabled: true
     });
     
     console.log('Adding in test post3 - this should not be shown');
@@ -64,7 +66,8 @@ Meteor.startup(function () {
         auth: key,
         author: userId2, 
         published: false, 
-        created: new Date()
+        created: new Date(),
+        commentsEnabled: false
     });
     
     addPostCategory({postId: postId1, categoryId: categoryId1, auth: key});

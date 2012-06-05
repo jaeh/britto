@@ -25,7 +25,7 @@
         <div class="control-group">
           <label for="post-published" class="control-label">Publish Post:</label>
           <div class="controls">
-            <input id="post-published" type="checkbox" checked />
+            <input id="post-published" type="checkbox" {{#if published}}checked {{/if}}/>
             <span>If date is in the future and publish is checked, the post will be published at that date</span>
           </div>
         </div>
@@ -65,6 +65,10 @@
         <div class="control-group">
           <label for="post-slug" class="control-label">Slug</label>
           <div class="controls"><input type="text" id="post-slug" class="change-slug" value="{{slug}}" /></div>
+        </div>
+        <div class="control-group">
+          <label for="post-commentsenabled" class="control-label">Enable Comments:</label>
+          <div class="controls"><input id="post-commentsenabled" type="checkbox" {{#if commentsEnabled}}checked {{/if}}/></div>
         </div>
         <div class="form-actions">
           <button class="btn btn-primary" id="post-button" >Post</button>
