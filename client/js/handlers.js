@@ -59,14 +59,16 @@ Template.login.events = {
   'click #login-button, submit #login-button': doLogin
 };
 
-Template.user_area.events = {
-  'click #post-button, submit #post-button': makePost,
-  'change #post-title, keyup #post-title': slugifyInput,
-  'change .change-slug, keyup .change-slug': slugifyInput,
-  'change #date-control-group select': checkDate,
-  'click .category-remove-button, submit .category-remove-form': removePostCategory,
-  'click .category-add-button, submit .category-add-form': addPostCategory
-};
+_.each(['user_area', 'edit_page'], function(template) {
+  Template[template].events = {
+    'click #post-button, submit #post-button': makePost,
+    'change #post-title, keyup #post-title': slugifyInput,
+    'change .change-slug, keyup .change-slug': slugifyInput,
+    'change #date-control-group select': checkDate,
+    'click .category-remove-button, submit .category-remove-form': removePostCategory,
+    'click .category-add-button, submit .category-add-form': addPostCategory
+  };
+});
 
 Template.settings.events = {
   'click #change-setting-button, submit #change-setting-button': changeSetting,
@@ -94,14 +96,16 @@ Template.users.events = {
   'click .delete-user, submit .delete-user': deleteUser
 };
 
-Template.post_list.events = {
-  'click .post-edit-button': editPost,
-  'click .post-delete-button': deletePost,
-  'click .post-publish-button': publishPost,
-  'click .post-unpublish-button': unpublishPost,
-  //'change .orderby': changeOrderBy, //not now
-  'click .category-remove-button': removePostCategory
-};
+
+_.each(['post_list', 'page_list'], function(template) {
+  Template[template].events = {
+    'click .post-edit-button': editPost,
+    'click .post-delete-button': deletePost,
+    'click .post-publish-button': publishPost,
+    'click .post-unpublish-button': unpublishPost,
+    'click .category-remove-button': removePostCategory
+  };
+});
 
 Template.post_categories.events = {
   'click .category-delete-button': deleteCategory,
@@ -110,7 +114,12 @@ Template.post_categories.events = {
   'change .change-slug, keyup .change-slug': slugifyInput
 };
 
-Template.datePicker.events = {
+
+Template.menu_list.events = {
+  'click .menu-expand-btn, click .menu-item-expand-btn': expandMenu,
+  'click .menus-expand-btn, click .menu-items-expand-btn': expandAllMenus
+};
+Template.date_picker.events = {
   //this could be much nicer, but <select> and <option> dont support mouseover, not even when using jquery :(
   //'hover .post-year-option select': loadMoreYears,
   'change .post-month-select': getDaysInMonth
@@ -235,13 +244,6 @@ function deletePost(e) {
   }
 }
 
-function editPost(e) {
-  e.preventDefault();
-  target = e.target;
-  postId = $(target).attr('data-slug');
-  Stellar.redirect('/user_area/edit?id='+postId);
-}
-
 function deletedPost(error, response) {
   if(!error && response) {
     Stellar.redirect('/');
@@ -250,10 +252,13 @@ function deletedPost(error, response) {
   }
 }
 
-function changeTitle() {
-  slug = slugify ($('#post-title').val());
-  $('#post-slug').val(slug);
+function editPost(e) {
+  e.preventDefault();
+  target = e.target;
+  postSlug = $(target).attr('data-slug');
+  Stellar.redirect('/user_area/edit?id='+postSlug);
 }
+
 
 function makePost(e) {
   e.preventDefault();
@@ -268,6 +273,8 @@ function makePost(e) {
   slug = slugify($('#post-slug').val());
   
   _id = $('#post-id').val();
+  
+  type = $('#post-type').val();
   
   created = new Date( $('#post-year').val(), $('#post-month').val(), $('#post-day').val(), $('#post-hour').val(), $('#post-minute').val() );
   if(isNaN(created)) {
@@ -284,7 +291,8 @@ function makePost(e) {
         author: author,
         published: published,
         created: created,
-        _id: _id
+        _id: _id,
+        type: type
       },
       madePost
     );
@@ -295,6 +303,7 @@ function makePost(e) {
 //create post callback
 function madePost(error, response) {
   if(!error) {
+    console.log("response ="+response);
     //redirect to the admin post list
     Stellar.redirect('/user_area/posts');
   } else {
@@ -358,16 +367,16 @@ function checkDate() {
 
 function publishPost(e) {
   e.preventDefault();
-  target = e.target;
-  slug = $(target).attr('data-slug');
-  Meteor.call('publishPost', {slug: slug, published: true, auth: Stellar.session.getKey()}, standardHandler);
+  target = $(e.target);
+  _id = target.attr('data-id');
+  Meteor.call('publishPost', {_id: _id, published: true, auth: Stellar.session.getKey()}, standardHandler);
 }
 
 function unpublishPost(e) {
   e.preventDefault();
-  target = e.target;
-  slug = $(target).attr('data-slug');
-  Meteor.call('unpublishPost', {slug: slug, published: false, auth: Stellar.session.getKey() }, standardHandler);
+  target = $(e.target);
+  _id = target.attr('data-id');
+  Meteor.call('publishPost', {_id: _id, published: false, auth: Stellar.session.getKey() }, standardHandler);
 }
 
 function changeOrderBy(e) {
@@ -415,11 +424,6 @@ function deleteCategory(e) {
   return false;
 }
 
-function changeCategoryName() {
-  slug = $('#category-name').val();
-  $('#category-slug').val(slug.replace(/\s/g, '_').toLowerCase());
-}
-
 function addPostCategory(e) {
   e.preventDefault();
   if(Session.get('user')) {
@@ -445,7 +449,7 @@ function removePostCategory(e) {
   return false;
 }
 
-//handle the calculation of the number of days in a month for the datePicker template
+//handle the calculation of the number of days in a month for the date_picker template
 function getDaysInMonth(e) {
   target = $(e.target);
   
@@ -491,3 +495,54 @@ function slugify(slug) {
   return slug;
 }
 
+function expandMenu(e){
+  e.preventDefault();
+  console.log("expandmenu");
+  target = $(e.target);
+  expandTarget = target.parent().next('.'+target.attr('data-slug'));
+  
+  if( target.hasClass('disabled') == false ){
+    target.addClass('disabled');
+    expandTarget.animate({height: 'toggle'}, 100, function(){
+      target.removeClass('disabled');
+      console.log('target.val()='+target.val());
+      if (target.val() == 'Expand') {
+        target.val('Collapse');
+      }else{
+        target.val('Expand');
+      }
+    });
+  }
+}
+
+function expandAllMenus(e) {
+  console.log("called expand all menus");
+  e.preventDefault();
+  target = $(e.target);
+  
+  expandTargets = $('.'+target.attr('data-slug'));
+  
+  if(target.hasClass('disabled') == false) {
+    
+    target.addClass('disabled');
+    
+    targetHeight = '0';
+    if(target.hasClass('expanded') == true) {
+      $('.menu-expand-btn').removeClass('expanded');
+      $(expandTargets).removeClass('expanded');
+      $('.menu-expand-btn').each(function(){
+        $(this).val(target.val().replace('Collapse','Expand'));
+      });
+    }else{
+      targetHeight = 'auto';
+      $('.menu-expand-btn').addClass('expanded');
+      $(expandTargets).addClass('expanded').show();
+      $('.menu-expand-btn').each(function(){
+        $(this).val(target.val().replace('Expand','Collapse'));
+      });
+    }
+    $(expandTargets).stop().animate({height: targetHeight}, 100, function(){
+      target.removeClass('disabled');
+    });
+  }
+}

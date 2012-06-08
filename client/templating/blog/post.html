@@ -13,10 +13,12 @@
       {{/each}}
     </ul>
     {{/if}}
+    {{#if isPost _id}}
     <dl>
       <dt>Posted by</dt><dd>{{postUser author}}</dd>
       <dt>Created</dt><dd><time>{{date created}}</time></dd>
     </dl>
+    {{/if}}
     {{#if user}}<button class="btn btn-primary delete-post" data-id="{{_id}}" >Delete post</button>{{/if}}
     {{#if user}}<button class="btn btn-primary edit-post" data-slug="{{slug}}" >Edit post</button>{{/if}}
   </article>

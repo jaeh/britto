@@ -92,6 +92,13 @@ select {
   height: 26px;
 }
 
+ul ul {
+  margin: 0 0 0 1%;
+}
+ul ul ul {
+  margin: 0 0 0 2%;
+}
+
 ul li {
   list-style-type:none;
   margin-left:1em;
@@ -625,4 +632,76 @@ ul.category-ul li {
 ul.category-cloud li {
   display: inline;
   margin: 0 2px;
+}
+
+#menu-form input, #menu-form select {
+  width: 80px;
+  border-radius: 2px;
+}
+#menu-form ul li {
+  display: block;
+}
+
+#menu-form ul ul li {
+  display: inline;
+}
+.menu-details, .menu-item-details {
+  border: 1px solid ;
+  border-radius: 3px;
+}
+
+.menu-item-details li, .menus-meta li {
+  display: inline;
+}
+
+.menu-container {
+  padding: 10px 0 0;
+}
+
+ul.menu {
+  margin: 10px 0;
+}
+
+ul.menu-item {  
+  font-size: 0.9em;
+  display: inline-block;
+  margin: 5px 0;
+  padding: 1px 10px 3px 0;
+  min-width: 51%;
+}
+
+ul.menu, ul.menu-item {
+  border: 1px solid ;
+  border-radius: 3px;
+}
+
+ul.menu-item {
+  margin: 0 0 5px;
+}
+
+li.menu-items ul.menu-item {
+  margin: 0 0 5px;
+}
+li.sub-menu-items ul.menu-item {
+  margin: 0 0 5px 2em;
+}
+
+li.sub-sub-menu-items ul.menu-item {
+  margin: 0 0 5px 4em;
+}
+
+.menus ul.menu li.menu-items {
+  margin: 10px 0;
+}
+
+ul.menu {
+  padding: 0 10px;
+}
+
+.expand {
+  float: right;
+}
+
+.menu-items, .menu-item-options {
+  overflow: hidden;
 }

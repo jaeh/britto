@@ -28,6 +28,8 @@ Meteor.subscribe("allcomments");
 Meteor.subscribe("allusers");
 Meteor.subscribe("allcategories");
 Meteor.subscribe("allcategoriesinposts");
+Meteor.subscribe("allmenus");
+Meteor.subscribe("allmenuitems");
 
 Britto.alert = function(type, message) {
   Stellar.log(message);

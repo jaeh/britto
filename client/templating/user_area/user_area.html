@@ -33,7 +33,7 @@
           </div>
         </div>
         
-        {{>datePicker}}
+        {{>date_picker}}
         
         <div class="control-group">
           <label for="post-body" class="control-label">Body</label>
@@ -74,12 +74,17 @@
           <div class="controls"><input type="text" id="post-slug" class="change-slug" value="{{slug}}" /></div>
         </div>
         
+        {{#if showCommentsGlobal}}
         <div class="control-group">
           <label for="post-showcomments" class="control-label">Enable Comments:</label>
           <div class="controls"><input id="post-showcomments" type="checkbox" {{#if showComments}}checked {{/if}}/></div>
         </div>
+        {{/if}}
         
         <div class="form-actions">
+          {{#if type}}
+          <input id="post-type" type="hidden" value="{{type}}" />
+          {{/if}}
           {{#if _id}}<input id="post-id" type="hidden" value="{{_id}}" />{{/if}}
           <button class="btn btn-primary" id="post-button" >Post</button>
         </div>
@@ -88,43 +93,4 @@
     </form>
   </section>
   {{/if}}
-</template>
-
-<template name="datePicker">
-  <div class="control-group" id="date-control-group">
-    <label for="post-day" class="control-label">Date</label>
-    <div class="controls">
-      {{#with dates}}
-      <select class="post-day-select">
-        {{#each days }}
-        <option {{#if selected}}selected="selected" {{/if}}value="{{day}}">{{day}}</option>
-        {{/each}}
-      </select>
-      <span>/</span>
-      <select class="post-month-select">
-        {{#each months }}
-        <option {{#if selected}}selected="selected" {{/if}}value="{{monthnum}}">{{monthname}}</option>
-        {{/each}}
-      </select>
-      <span>/</span>
-      <select class="post-year-select">
-        {{#each years }}
-        <option class="post-year-option" {{#if selected}}selected="selected" {{/if}}value="{{year}}">{{year}}</option>
-        {{/each}}
-      </select>
-      <span>@</span>
-      <select class="post-hour-select">
-        {{#each hours}}
-        <option {{#if selected}}selected="selected" {{/if}}value="{{hour}}">{{hour}}</option>
-        {{/each}}
-      </select>
-      <span>:</span>
-      <select class="post-minute-select">
-        {{#each minutes}}
-        <option {{#if selected}}selected="selected" {{/if}}value="{{minute}}">{{minute}}</option>
-        {{/each}}
-      </select>
-      {{/with}}
-    </div>
-    </div>
 </template>

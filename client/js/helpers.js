@@ -12,14 +12,11 @@ $(window).bind('stellar_page_load', function() {
    Session.set('nav_link', !refresh);
 });
 
-Handlebars.registerHelper('nav_link', function (url, options) {
-  var linkText = options.fn(this);
-  classAttr = '';
-  Session.get('nav_link');
+Handlebars.registerHelper('is_current_page', function (url) {
   if(window.location.pathname == url) {
-    classAttr = 'class="active"';
+    return true;
   }
-  return '<li '+classAttr+'><a href="'+url+'">'+linkText+'</a></li>';
+  return false;
 });
 
 //Markdown handles escapes so shouldn't be an issue
@@ -27,9 +24,17 @@ Handlebars.registerHelper('better_markdown_escape', function(string, fn) {
   return better_markdown(string);
 });
 
-Handlebars.registerHelper('settingIsBool', function( value ) {
+Handlebars.registerHelper('settingIsBool', function(value) {
   //console.log( typeof (value) );
   if ( value != undefined && typeof value == "boolean" ) {
+    return true;
+  }
+  return false;
+});
+
+Handlebars.registerHelper('isPost', function(id) {
+  page = Posts.findOne({_id: id}, {fields: { type: 1 } });
+  if( page && page.type == 'post') {
     return true;
   }
   return false;
@@ -178,3 +183,45 @@ function better_markdown(input) {
   var output = converter.makeHtml(newInput);
   return output;
 }
+
+
+
+//determines if a menuitem should be shown or not
+Handlebars.registerHelper('showMenuItem', function(showIf) {
+  //showIf is set through the admin interface, will be a dropdown with the three choices, 'always' being the default
+  if(showIf == 'always'){
+    return true;
+    
+  }else if(showIf == 'auth') {
+    if ( Session.get('user') ) {
+      return true;
+    }
+    return false;
+    
+  }else if(showIf == 'noauth') {
+    if(!Session.get('user')) {
+      return true;
+    }
+    return false;
+  }
+  return false;
+});
+
+Handlebars.registerHelper('showCommentsGlobal', function() {
+  showComments = Settings.findOne({key:'show_comments_globally'});
+  if(showComments && showComments.value) {
+    return showComments.value;
+  }
+  //have comments on in case the user didnt set the show_comments_globally setting
+  return true;
+});
+
+
+Handlebars.registerHelper('showIfEquals', function(showIf) {
+  
+  if(showIf == this.showIfVal){
+    return true;
+  }
+  return false;
+});
+

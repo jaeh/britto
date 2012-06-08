@@ -27,46 +27,82 @@ Template.sidelinks.blogRoll = function() {
   return false;
 }
 
-Template.nav.links = function() {
-  var post_sub_links = [];
-  
-  //replace this with database entries soon
-  var links = [{url: '/blog/', text: 'Home'}];
-  
-  //if the user is not logged in, show loginlink in menu
-  if(!Session.get('user')) {
-    links.push({url: '/home/login', text: 'Login'});
-  }else{
-    links.push({url: '/home/logout', text: 'Logout'});
+
+Template.nav.menuItems = function() {
+  return getMenu('main');
+}
+
+Template.user_area_nav.menuItems = function() {
+  if(Session.get('user')) {
+    return getMenu('user_area');
   }
-
-  return links;
+  return false;
 }
 
-//helper to easily see if the user is logged in.
-Template.user_area_nav.user_is_logged_in = function () {
-  return Session.get('user');
-}
 
-//admin menu
-Template.user_area_nav.user_area_links = function () {
-  //only show to logged in users
-  if(!Session.get('user')) {
-    return false;
-  }
-  //defining the menu items.
-  //should be read from the db soon - hmm might slow it down while we don't have prerendered html
-  user_area_links = [
-    {url: '/user_area/posts', text: 'Posts'},
-    {url: '/user_area', text: '&nbsp;&nbsp;New Post'}, //TODO make sub pages here and neaten up, this path should be /user_area/posts/new but that needs a change in stellar :/
-    {url: '/user_area/post_categories', text: '&nbsp;&nbsp;Categories'},
-    {url: '/user_area/users', text: 'Users'},
-    {url: '/user_area/options', text: 'Options'},
-    {url: '/user_area/settings', text: 'Settings'}
-  ];
+function getMenu(slug) {
+  //check if there even is a menu with that slug
+  menu = Menus.findOne({slug: slug}, {fields: { _id: 1 }});
   
-  return user_area_links;
+  if(menu) {
+    //fetch() the menuitems to get arrays
+    find = ['always'];
+    if(Session.get('user')) {
+      find.push('auth');
+    }else{
+      find.push('noauth');
+    }
+    
+    menuItems = MenuItems.find(
+      {menuId: menu._id, parent: false, showIf: {$in: find}},
+      {sort: {position: -1}}
+    ).fetch();
+
+    //allow three levels of menus
+    for(var i = 0; i < menuItems.length; i++) {
+      menuItems[i].sublinks = MenuItems.find(
+        {menuId: menu._id, parent: menuItems[i]._id},
+        {sort: {position: -1}}
+      ).fetch();
+      for(var j = 0; j < menuItems[i].sublinks.length; j++) {
+        menuItems[i].sublinks[j].sublinks = MenuItems.find(
+          {menuId:menu._id, parent: menuItems[i].sublinks[j]._id},
+          {sort: {position: -1}}
+        ).fetch();
+      }
+    }
+    
+    /*
+     * TODO: make this work with forEach instead of the above?
+    menuItems.forEach(function(menuItem) {
+      menuItem.sublinks = MenuItems.find({menuId: menu._id, parent: menuItem._id});
+      if(menuItems.sublinks) {
+        menuItem.sublinks.forEach(function(subMenuItem) {
+          subMenuItem.sublinks = MenuItems.find({menuId:menu._id, parent: subMenuItem._id});
+        });
+      }
+    });
+    */
+    return menuItems;
+  }
+  return false;
 }
+
+function showMenuItem(showIf) {
+  if(showIf == 'always'){
+    return true;
+  }else if(showIf == 'auth') {
+    if ( Session.get('user') ) {
+      return true;
+    }    
+  }else if(showIf == 'noauth') {
+    if(!Session.get('user')) {
+      return true;
+    }
+  }
+  return false;
+}
+
 
 _.each(['postShort', 'post'], function(template) {
   //get commentcount
@@ -157,29 +193,32 @@ _.each(['postShort', 'post', 'postView', 'post_list', 'user_area'], function(tem
   }
 });
 
-_.each(['options', 'user_area', 'post_list', 'comment', 'nav', 'post'], function(template) {
+_.each(['options', 'user_area', 'post_list', 'page_list', 'edit_page', 'comment', 'nav', 'post', 'user_area_nav', 'menu_list'], function(template) {
   Template[template].user = function() {
     return Session.get('user');
   }
 });
 
-
-Template.post_list.postUser = function(id) {
-  user = Users.findOne({_id: id});
-  if(user) {
-    return user.name;
-  } else {
-    return '';
+_.each(['post_list', 'page_list'], function(template) {
+  Template[template].postUser = function(id) {
+    user = Users.findOne({_id: id});
+    if(user) {
+      return user.name;
+    } else {
+      return '';
+    }
   }
-}
+});
 
 
 //called in user_area.html to get all users for the author select fields
-Template.user_area.userlist = function () {
-  return Users.find({}, { fields: { name: 1, _id: 1 } });
-}
+_.each(['user_area', 'edit_page'], function(template) {
+  Template[template].userlist = function () {
+    return Users.find({}, { fields: { name: 1, _id: 1 } });
+  }
+});
 
-_.each(['user_area', 'categorycloud'], function (template) {
+_.each(['user_area', 'edit_page', 'categorycloud'], function (template) {
   Template[template].allcategories = function(){
     
     categories = Categories.find({}, { fields: { name: 1, slug: 1, _id: 1 } });
@@ -227,7 +266,7 @@ _.each(['user_area', 'categorycloud'], function (template) {
 //TODO neaten this method, needs explanation too
 //this method enables the input of a date when creating a new post
 //it also shows days, monthnames and a selection of years as well as minutes and seconds
-Template.datePicker.dates = function () {
+Template.date_picker.dates = function () {
   dates = {};
   
   //first get now to have a reference
@@ -285,11 +324,11 @@ Template.datePicker.dates = function () {
   
   //adding minutes
   dates.minutes = [];
-  for ( var i = 0; i < 60; i++ ) {
+  for(var i = 0; i < 60; i++) {
     dates.minutes.push({ minute: i, selected: i == now.getMinutes() });
   }
   
-  //to use the dates interface somewhere in the theme {{>datePicker}} 
+  //to use the dates interface somewhere in the theme {{>date_picker}} 
   return dates;
 }
 
@@ -299,3 +338,26 @@ function getMonthName(month) {
   var m = ['January','February','March','April','May','June','July', 'August','September','October','November','December'];
   return m[month];
 }
+
+Template.menu_list.menus = function() {
+  return this;
+}
+
+Template.menu_items.menuItems = function(){
+  return this;
+}
+
+Template.menu_item.menuItem = function(){
+  return this;
+}
+
+function getOptions(showIf) {
+  options = [
+    {showIf: 'always', text: 'always', selected: showIf == 'always'},
+    {showIf: 'auth', text: 'auth', selected: showIf == 'auth'},
+    {showIf: 'noauth', text: 'noauth', selected: showIf == 'noauth'},
+    {showIf: 'never', text: 'never', selected: showIf == 'never'}
+  ];
+  return options;
+}
+

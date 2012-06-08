@@ -12,7 +12,10 @@ Meteor.publish("allusers", function() {
 
 //TODO Deprecated, needs removing
 Meteor.publish("allposts", function() {
-  return Posts.find({}, {fields: {}});
+  return Posts.find({type: 'post'}, {fields: {}});
+});
+Meteor.publish("allpages", function() {
+  return Posts.find({type: 'page'}, {fields: {}});
 });
 
 Meteor.publish("postpage", function(page) {
@@ -39,4 +42,11 @@ Meteor.publish("allcategories", function() {
 
 Meteor.publish("allcategoriesinposts", function () {
   return CategoriesInPosts.find({}, {fields: {}});
+});
+
+Meteor.publish("allmenus", function () {
+  return Menus.find({}, {fields: {}});
+});
+Meteor.publish("allmenuitems", function () {
+  return MenuItems.find({}, {fields: {}});
 });

@@ -1,6 +1,6 @@
 <template name="postShort">
   <article class="post" id="{{_id}}">
-    <h2><a href="/blog/{{slug}}" >{{ title }}</a></h2>
+    <h2><a href="/blog/{{slug}}" >{{title}}</a></h2>
     {{#short_content_escape slug body}}{{/short_content_escape}}
     
     {{#if hasCategory _id}}

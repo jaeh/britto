@@ -16,11 +16,16 @@ Meteor.methods({
   deleteBlogRoll: deleteBlogRoll,
   insertBlogRoll: insertBlogRoll,
   publishPost: publishPost,
-  unpublishPost: unpublishPost,
   makeCategory: makeCategory,
   deleteCategory: deleteCategory,
   addPostCategory: addPostCategory,
-  removePostCategory: removePostCategory
+  removePostCategory: removePostCategory,
+  makeMenu: makeMenu,
+  removeMenu: removeMenu,
+  publishMenu: publishMenu,
+  makeMenuItem: makeMenuItem,
+  removeMenuItem: removeMenuItem,
+  publishMenuItem: publishMenuItem
 });
 
 //TODO when minimogo adds in limit and so on, clear this function out its just a helper
@@ -49,6 +54,7 @@ function changePassword(args) {
       return true;
     }
   }
+  throw new Meteor.Error(401, 'You are not logged in');
   return false;
 }
 
@@ -57,6 +63,7 @@ function changeUser(args) {
     Users.update({_id: user._id}, {$set: {name: args.name}});
     return true;
   }
+  throw new Meteor.Error(401, 'You are not logged in');
   return false;
 }
 
@@ -67,6 +74,7 @@ function addUser(args) {
     createUser(user);
     return true;
   }
+  throw new Meteor.Error(401, 'You are not logged in');
   return false;
 }
 
@@ -75,6 +83,7 @@ function removeUser(args) {
     Users.remove({_id: args.id});
     return true;
   }
+  throw new Meteor.Error(401, 'You are not logged in');
   return false;
 }
 
@@ -85,6 +94,7 @@ function changeSetting(args) {
     });
     return true;
   }
+  throw new Meteor.Error(401, 'You are not logged in');
   return false;
 }
 
@@ -93,6 +103,7 @@ function deleteComment(args) {
     Comments.remove({_id: args.commentId});
     return true;
   }
+  throw new Meteor.Error(401, 'You are not logged in');
   return false;
 }
 
@@ -101,6 +112,7 @@ function deletePost(args) {
     Posts.remove({_id: args.commentId});
     return true;
   }
+  throw new Meteor.Error(401, 'You are not logged in');
   return false;
 }
 
@@ -109,6 +121,7 @@ function deleteBlogRoll(args) {
     BlogRoll.remove({_id: args.id});
     return true;
   }
+  throw new Meteor.Error(401, 'You are not logged in');
   return false;
 }
 
@@ -153,7 +166,8 @@ function makePost(args) {
           body: args.body,
           author: args.author,
           published: args.published,
-          showComments: args.showComments
+          showComments: args.showComments,
+          type: args.type
         }
       });
     } else {
@@ -165,7 +179,8 @@ function makePost(args) {
         author: args.author,
         published: args.published,
         created: created,
-        showComments: args.showComments
+        showComments: args.showComments,
+        type: args.type
       });
     }
     return postId;
@@ -225,19 +240,13 @@ function createUser(vals) {
 
 function publishPost(args) {
   if(user = checkAuth(args.auth)) {
-    Posts.update({slug: args.slug}, {$set: { published: args.published } } );
+    Posts.update({_id: args._id}, {$set: { published: args.published } } );
     return true;
   }
+  throw new Meteor.Error(401, 'You are not logged in');
   return false;
 }
 
-function unpublishPost(args) {
-  if(user = checkAuth(args.auth)) {
-    Posts.update({slug: args.slug}, {$set: { published: args.published } } );
-    return true;
-  }
-  return false;
-}
 
 
 function makeCategory(args) {
@@ -297,12 +306,113 @@ function addPostCategory(args) {
   return false;
 }
 
-function removePostCategory ( args ) {
+function removePostCategory(args) {
   if(user = checkAuth(args.auth)) {
-    category = CategoriesInPosts.findOne({ _id: args.postId }, { } );
-        
-    CategoriesInPosts.remove( { postId: args.postId, categoryId: args.categoryId } );
-    return true;
+    categoryId = CategoriesInPosts.remove({ postId: args.postId, categoryId: args.categoryId } );
+    return categoryId;
+  }
+  throw new Meteor.Error(401, 'You are not logged in');
+  return false;
+}
+
+function makeMenu(args) {
+  if(user = checkAuth(args.auth)) {
+    //first get the menu
+    menu = Menus.findOne({ _id: args._id });
+    
+    //this allows to simply check if it worked later in the caller
+    menuId = false;
+    if(menu) {
+      menuId = Menus.update({ _id: args._id }, {$set: {
+        name: args.name,
+        slug: args.slug,
+        showIf: args.showIf
+      }});
+    }else{
+      menuId = Menus.insert({
+        name: args.name,
+        slug: args.slug,
+        showIf: args.showIf
+      });
+    }
+    return menuId;
+  }
+  throw new Meteor.Error(401, 'You are not logged in');
+  return false;
+}
+
+function removeMenu(args) {
+  if(user = checkAuth(args.auth)) {
+    menuId = Menus.remove({ _id: args.menuId });
+    return menuId;
+  }
+  throw new Meteor.Error(401, 'You are not logged in');
+  return false;
+}
+
+function makeMenuItem(args) {
+  if(user = checkAuth(args.auth)) {
+    menuItem = MenuItems.findOne({ _id: args._id } );
+    menuItemId = false;
+    if(menuItem) {
+      menuItemId = MenuItems.update({ _id: args._id }, {$set: {
+        url: args.url,
+        text: args.text,
+        showIf: args.showIf,
+        menuId: args.menuId,
+        parent: args.parent
+      }});
+    }else{
+      menuItemId = MenuItems.insert({
+        url: args.url,
+        text: args.text,
+        showIf: args.showIf,
+        menuId: args.menuId,
+        parent: args.parent
+      });
+    }
+    
+    return menuItemId;
+  }
+  throw new Meteor.Error(401, 'You are not logged in');
+  return false;
+}
+
+function publishMenu(args) {
+  if(user = checkAuth(args.auth)) {
+    menu = Menus.findOne({_id: args.menuId}, {fields: {_id:1}});
+    menuId = false;
+    if(menu) {
+      menuId = menu.update({_id: menu._id}, {$set: {
+        showIf: args.showIf
+      }});
+    }
+    return menuId;
+  }
+  throw new Meteor.Error(401, 'You are not logged in');
+  return false;
+}
+
+function publishMenuItem(args) {
+  if(user = checkAuth(args.auth)) {
+    menuItem = MenuItems.findOne({_id: args.menuItemId}, {fields: {_id:1}});
+    menuItemId = false;
+    if(menuItem) {
+      menuItemId = menu.update({_id: menuItem._id}, {$set: {
+        showIf: args.showIf
+      }});
+    }
+    return menuItemId;
+  }
+  throw new Meteor.Error(401, 'You are not logged in');
+  return false;
+}
+
+
+function removeMenuItem(args) {
+  if(user = checkAuth(args.auth)) {
+    menuItemId = MenuItems.remove({ _id: args._id });
+    return menuItemId;
   }
   throw new Meteor.Error(401, 'You are not logged in');
   return false;

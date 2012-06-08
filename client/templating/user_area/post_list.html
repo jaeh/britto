@@ -19,7 +19,6 @@
     <table>
       {{#each posts}}
         <tr>
-            <!--<input id="post-expand-{{_id}}" class="post-expand-button" data-slug="{{slug}}" type="button" value="Expand" />-->
             <td class="post-title">
               {{#if published}}
               <a href="/blog/{{slug}}">
@@ -32,13 +31,13 @@
             <td class="post-author">{{postUser author}}</span>
             <td class="post-date">{{date created}}</span>
             <td>
-              <input id="post-edit-{{_id}}" class="post-edit-button btn" data-slug="{{slug}}" type="button" value="Edit" />
+              <input class="post-edit-button btn" data-slug="{{slug}}" type="button" value="Edit" />
               {{#if published }}
-              <input id="post-unpublish-{{_id}}" class="post-unpublish-button btn" data-slug="{{slug}}" type="button" value="Unpublish" />
+              <input class="post-unpublish-button btn" data-id="{{_id}}" type="button" value="Unpublish" />
               {{else}}
-              <input id="post-publish-{{_id}}" class="post-publish-button btn" data-slug="{{slug}}" type="button" value="Publish" />
+              <input class="post-publish-button btn" data-id="{{_id}}" type="button" value="Publish" />
               {{/if}}
-              <input id="post_delete_{{_id}}" data-id="{{_id}}" class="post-delete-button btn" type="button" value="Delete" />
+              <input data-id="{{_id}}" class="post-delete-button btn" type="button" value="Delete" />
             </td>
       
         </tr>
