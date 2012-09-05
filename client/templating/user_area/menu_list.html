@@ -1,0 +1,197 @@
+<template name="menu_list">  
+  {{#if user}}
+    <div id="menu-list">
+      <form id="menu-form" class="form-vertical" action="#">
+        <fieldset>
+          <legend>Change Menus</legend>
+          <div class="menus-controls span2">
+            <div class="sidebar">
+              <div class="disclaimer">
+                
+                This is the menu list sidebar<br/>
+                this page is currently being worked on,
+                will get full functionality soon :)
+              </div>
+              
+              {{#if menu}}
+                {{#if pages}}
+                  <div id="page-link-menu" class="bubble">
+                    <ul class="page-link-item-list">
+                      <li class="header">Add Pages to the menu:</li>
+                      {{#each pages}}
+                        <li class="link-item" draggable="true">
+                          <input type="checkbox" class="page-link-item-add" />
+                          <a href="/blog/{{slug}}">{{title}}</a>
+                        </li>
+                      {{/each}}
+                      <li class="footer">
+                        <input type="button" value="Add links to menu" />
+                      </li>
+                    </ul>
+                  </div>
+                {{/if}}
+              
+                 {{#if categories}}
+                  <div id="category-link-menu" class="bubble">
+                    <ul class="category-link-item-list">
+                      <li class="header">Add Categories to the menu:</li>
+                      {{#each categories}}
+                        <li class="link-item" draggable="true">
+                         <input type="checkbox" class="category-link-item-add" />
+                          <a href="/category/?show={{slug}}">{{name}}</a>
+                        </li>
+                      {{/each}}
+                      <li class="footer">
+                        <input type="button" value="Add links to menu" />
+                      </li>
+                    </ul>
+                  </div>
+                {{/if}}
+
+
+                <div id="custom-link-menu" class="bubble">
+                  <ul>
+                    <li class="header">Add custom link:</li>
+                    <li class="content-item" draggable="true">
+                      <span>Url:</span>
+                      <input type="text" class="custom-link-url" />
+                      <span>Text:</span>
+                      <input type="text" class="custom-link-text" />
+                    </li>
+                    <li class="footer">
+                      <input type="button" class="btn-primary slim btn custom-link-submit" value="Add Link" />
+                    </li>
+                  </ul>
+                </div>
+              
+              {{else}}
+                <div class="disclaimer">
+                  This is the Menu admin menu.<br/>
+                  To reveil more options select a menu on the right.
+                </div>
+              {{/if}}
+            </div>
+          </div>
+          <div class="menus span8">
+            {{#if allmenus}}
+              <div class="menu-sidebar-nav">
+              <ul class="inline">
+                <li><a href="/user_area/menus">All Menus</a></li>
+                {{#each allmenus}}
+                  <li><a href="/user_area/menus?id={{slug}}">{{name}}</a></li>
+                {{/each}}
+              </ul>
+            </div>
+
+              <div class="menu-container">
+                {{#with menu}}
+                
+                  {{#if menu}}
+                    <div class="menu-content menu-parent bubble big-bubble" data-id="{{_id}}">
+                 
+                      <div class="header">
+                        <input type="text" class="menu-name" value="{{name}}" />
+                        {{#if options}}
+                          <span class="menu-showif">
+                            <label>shown if: {{showIf}}</label>
+                            <select class="show-if-options">
+                              {{#each options}}
+                                <option{{#if selected}} selected="selected"{{/if}} value="{{showIf}}">{{text}}</option>
+                              {{/each}}
+                            </select>
+                          </span>
+                        {{/if}}
+                        <input class="menu-delete-btn btn slim" type="button" value="Delete" />
+                        <input class="menu-expand-btn btn slim btn-primary expand expanded" data-slug="menu-items" type="button" value="Collapse" />
+                      </div>
+                      
+                      {{#if menuItems}}
+                        <div class="menu-items expandable">
+                          {{>menu_items menuItems}}
+                        </div>
+                      {{/if}}
+                    </div>
+                  {{else}}
+                    {{#each allmenus}}
+                      <div id="menu-content-{{slug}}" class="menu-content menu-parent bubble" data-id="{{_id}}">
+                        <div class="header">
+                          <input type="text" class="menu-name" value="{{name}}" />
+                          {{#if options}}
+                            <span class="menu-showif">
+                              <label for="show-if-options">shown if: {{showIf}}</label>
+                              <select class="show-if-options">
+                                {{#each options}}
+                                  <option{{#if selected}} selected="selected"{{/if}} value="{{showIf}}">{{text}}</option>
+                                {{/each}}
+                              </select>
+                            </span>
+                          {{/if}}
+                          <input class="menu-delete-btn btn slim" type="button" value="Delete" />
+                          <input class="menu-save-btn btn slim btn-primary" type="button" value="Save Changes" />
+                        </div>
+                      </div>
+                    {{/each}}
+                  {{/if}}
+                {{/with}}
+              </div>
+            {{/if}}
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  {{/if}}
+</template>
+
+<template name="menu_items">
+  {{#each menuItems}}
+    {{>menu_item}}
+    
+    {{#if sublinks}}
+      <div class="sub-menu-items">
+        {{#each sublinks}}
+          {{>menu_item}}
+          
+          {{#if sublinks}}
+            <div class="sub-menu-items">
+              {{#each sublinks}}
+                {{>menu_item}}
+              {{/each}}
+            </div>
+          {{/if}}
+        {{/each}}
+      </div>
+    {{/if}}
+  {{/each}}
+</template>
+
+<template name="menu_item">
+  <ul class="menu-item menu-parent droptarget bubble" data-slug="{{slug}}" data-id="{{_id}}" draggable="true">
+    <li class="header">
+      <a href="{{url}}">{{text}}</a>
+      <input class="menu-item-delete-btn slim btn"  data-id="{{_id}}" type="button" value="Delete" />
+      <input class="menu-item-expand-btn slim btn btn-primary expand expanded" data-slug="menu-item-options" data-id="{{_id}}" type="button" value="Collapse" />
+     </li>
+    <li class="content expandable">
+      <ul class="menu-item-options expandable options">
+        <li class="menu-item-settings">
+          <label for="menu-item-url">Url:</span>
+          <input class="menu-item-url"type="text" value="{{url}}" />
+          <label for="menu-item-text">Text:</label>
+          <input class="menu-item-text" type="text" value="{{text}}" />
+          <label>Position:</label>
+          <input class="menu-item-position" type="text" value="{{position}}" />
+        </li>
+        <li class="menu-item-showif">
+          <span>Shown if: {{showIf}}</span>
+          {{#if options}}
+            <select class="show-if-options">
+              {{#each options}}
+                <option{{#if selected}} selected="selected"{{/if}} value="{{showIf}}">{{text}}</option>
+              {{/each}}
+            </select>
+          {{/if}}
+        </li>
+      </ul>
+    </li>
+  </ul>
+</template>

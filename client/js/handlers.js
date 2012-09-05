@@ -117,8 +117,13 @@ Template.post_categories.events = {
 
 Template.menu_list.events = {
   'click .menu-expand-btn, click .menu-item-expand-btn': expandMenu,
-  'click .menus-expand-btn, click .menu-items-expand-btn': expandAllMenus
+  'dragstart [draggable]': menuListDragStart,
+  'dragend [draggable]': menuListDragEnd,
+  'dragenter .droptarget': menuListDragEnter,
+  'dragover .droptarget': menuListDragOver,
+  'dragleave': menuListDragLeave
 };
+
 Template.date_picker.events = {
   //this could be much nicer, but <select> and <option> dont support mouseover, not even when using jquery :(
   //'hover .post-year-option select': loadMoreYears,
@@ -497,15 +502,18 @@ function slugify(slug) {
 
 function expandMenu(e){
   e.preventDefault();
-  console.log("expandmenu");
   target = $(e.target);
-  expandTarget = target.parent().next('.'+target.attr('data-slug'));
-  
-  if( target.hasClass('disabled') == false ){
+  parent = $(e.target).closest('.menu-parent');
+  id = parent.attr('data-id');
+  console.log("id = "+id);
+  selector = '.expandable';
+  if(id && selector && target.hasClass('disabled') == false ) {
     target.addClass('disabled');
-    expandTarget.animate({height: 'toggle'}, 100, function(){
+    selected = parent.children(selector);
+    console.log("expandmenu selected  ="+selected+" with selector="+selector);
+    
+    selected.animate({height: 'toggle'}, 100, function(){
       target.removeClass('disabled');
-      console.log('target.val()='+target.val());
       if (target.val() == 'Expand') {
         target.val('Collapse');
       }else{
@@ -515,34 +523,54 @@ function expandMenu(e){
   }
 }
 
-function expandAllMenus(e) {
-  console.log("called expand all menus");
-  e.preventDefault();
+function menuListDragStart(e) {
+  e.target.classList.add('dragged');
+  $('.menu-parent').each(function() {
+    $(this).after('<ul class="menu-item menu-parent droptarget placeholder">Drop here</ul>');
+  });
+}
+
+
+function menuListDragEnd(e) {
+  $('.dragged').removeClass('dragged');
+  $('.dragged-over').removeClass('dragged-over');
+  $('.placeholder').remove();
+}
+
+function menuListDragEnter(e) {
+  // this / e.target is the current hover target.
   target = $(e.target);
+  console.log("target has droptarget = "+target.hasClass('droptarget'));
   
-  expandTargets = $('.'+target.attr('data-slug'));
+  if($(e.target).hasClass('droptarget') == false){
+    target = $(e.target).closest('.droptarget');
+    console.log("target set = "+target);
+  }
   
-  if(target.hasClass('disabled') == false) {
-    
-    target.addClass('disabled');
-    
-    targetHeight = '0';
-    if(target.hasClass('expanded') == true) {
-      $('.menu-expand-btn').removeClass('expanded');
-      $(expandTargets).removeClass('expanded');
-      $('.menu-expand-btn').each(function(){
-        $(this).val(target.val().replace('Collapse','Expand'));
-      });
-    }else{
-      targetHeight = 'auto';
-      $('.menu-expand-btn').addClass('expanded');
-      $(expandTargets).addClass('expanded').show();
-      $('.menu-expand-btn').each(function(){
-        $(this).val(target.val().replace('Expand','Collapse'));
-      });
-    }
-    $(expandTargets).stop().animate({height: targetHeight}, 100, function(){
-      target.removeClass('disabled');
-    });
+  target.addClass('dragged-over');
+  
+}
+
+function menuListDragOver(e) {
+  if (e.preventDefault) {
+    e.preventDefault(); // Necessary. Allows us to drop.
+  }
+
+  e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
+
+  return false;
+}
+
+function menuListDragLeave(e) {
+  target = $(e.target);
+  //closest gets the nearest parent the css selector applies to
+  leaveParent = $(e.target).closest('.menu-parent .menu-parent');
+  //if there is no menu-parent in the parents of this object - remove dragover class
+  if(!leaveParent) {
+    $('.dragged.over').removeClass('dragged-over');
   }
 }
+
+
+
+

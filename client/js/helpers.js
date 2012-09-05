@@ -225,3 +225,12 @@ Handlebars.registerHelper('showIfEquals', function(showIf) {
   return false;
 });
 
+
+Handlebars.registerHelper('is_admin', function() {
+  if(window.location.pathname.indexOf('user_area') != -1 ) {
+    console.log("is_admin true");
+    return true;
+  }
+  console.log("is_admin false");
+  return false;
+});

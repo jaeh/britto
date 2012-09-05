@@ -1,0 +1,38 @@
+<template name="date_picker">
+  <div class="control-group" id="date-control-group">
+    <label for="post-day" class="control-label">Date</label>
+    <div class="controls">
+      {{#with dates}}
+      <select class="post-day-select">
+        {{#each days }}
+        <option {{#if selected}}selected="selected" {{/if}}value="{{day}}">{{day}}</option>
+        {{/each}}
+      </select>
+      <span>/</span>
+      <select class="post-month-select">
+        {{#each months }}
+        <option {{#if selected}}selected="selected" {{/if}}value="{{monthnum}}">{{monthname}}</option>
+        {{/each}}
+      </select>
+      <span>/</span>
+      <select class="post-year-select">
+        {{#each years }}
+        <option class="post-year-option" {{#if selected}}selected="selected" {{/if}}value="{{year}}">{{year}}</option>
+        {{/each}}
+      </select>
+      <span>@</span>
+      <select class="post-hour-select">
+        {{#each hours}}
+        <option {{#if selected}}selected="selected" {{/if}}value="{{hour}}">{{hour}}</option>
+        {{/each}}
+      </select>
+      <span>:</span>
+      <select class="post-minute-select">
+        {{#each minutes}}
+        <option {{#if selected}}selected="selected" {{/if}}value="{{minute}}">{{minute}}</option>
+        {{/each}}
+      </select>
+      {{/with}}
+    </div>
+    </div>
+</template>

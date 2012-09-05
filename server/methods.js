@@ -360,7 +360,8 @@ function makeMenuItem(args) {
         text: args.text,
         showIf: args.showIf,
         menuId: args.menuId,
-        parent: args.parent
+        parent: args.parent,
+        position: args.position
       }});
     }else{
       menuItemId = MenuItems.insert({
@@ -368,7 +369,8 @@ function makeMenuItem(args) {
         text: args.text,
         showIf: args.showIf,
         menuId: args.menuId,
-        parent: args.parent
+        parent: args.parent,
+        position: args.position
       });
     }
     

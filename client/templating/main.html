@@ -1,8 +1,17 @@
 <template name="container">
-    <div id="mainContent">
-      {{#stellar_page}}
-      {{/stellar_page}}  
-    </div>
+      <div class="{{#if is_admin}}span10{{else}}span8{{/if}}">
+        <div id="mainContent">
+          {{#stellar_page}}
+          {{/stellar_page}}  
+        </div>
+      </div>
+      
+      {{#unless is_admin}}
+      <aside class="span2">
+        {{>widgets}}
+      </aside>
+      {{/unless}}
+      
 </template>
 
 <template name="nav">
@@ -11,17 +20,17 @@
       <div class="container">
         <a class="brand" href="/" >{{#setting}}site_name{{/setting}}</a>
         <nav class="nav-collapse">
-          <ul class="nav">
+          <ul class="nav main-nav">
            {{#each menuItems}}
-              <li{{#if is_current_page url}} class="active"{{/if}}><a href="{{url}}">{{text}}</a></li>
+              <li class="{{text}}{{#if is_current_page url}} active{{/if}}"><a href="{{url}}">{{text}}</a></li>
               {{#if sublinks}}
                 <ul class="sub-nav">
                 {{#each sublinks}}
-                  <li{{#if is_current_page url}} class="active"{{/if}}><a href="{{url}}">{{text}}</a></li>
+                  <li class="{{text}}{{#if is_current_page url}} active{{/if}}"><a href="{{url}}">{{text}}</a></li>
                   {{#if sublinks}}
                     <ul class="sub-sub-nav">
                     {{#each sublinks}}
-                      <li{{#if is_current_page url}} class="active"{{/if}}><a href="{{url}}">{{text}}</a></li>
+                      <li class="{{text}}{{#if is_current_page url}} active{{/if}}"><a href="{{url}}">{{text}}</a></li>
                     {{/each}}
                     </ul>
                   {{/if}}

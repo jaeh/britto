@@ -55,34 +55,23 @@ function getMenu(slug) {
     
     menuItems = MenuItems.find(
       {menuId: menu._id, parent: false, showIf: {$in: find}},
-      {sort: {position: -1}}
+      {sort: {position: 1}}
     ).fetch();
 
     //allow three levels of menus
     for(var i = 0; i < menuItems.length; i++) {
       menuItems[i].sublinks = MenuItems.find(
         {menuId: menu._id, parent: menuItems[i]._id},
-        {sort: {position: -1}}
+        {sort: {position: 1}}
       ).fetch();
       for(var j = 0; j < menuItems[i].sublinks.length; j++) {
         menuItems[i].sublinks[j].sublinks = MenuItems.find(
           {menuId:menu._id, parent: menuItems[i].sublinks[j]._id},
-          {sort: {position: -1}}
+          {sort: {position: 1}}
         ).fetch();
       }
     }
     
-    /*
-     * TODO: make this work with forEach instead of the above?
-    menuItems.forEach(function(menuItem) {
-      menuItem.sublinks = MenuItems.find({menuId: menu._id, parent: menuItem._id});
-      if(menuItems.sublinks) {
-        menuItem.sublinks.forEach(function(subMenuItem) {
-          subMenuItem.sublinks = MenuItems.find({menuId:menu._id, parent: subMenuItem._id});
-        });
-      }
-    });
-    */
     return menuItems;
   }
   return false;
@@ -343,21 +332,11 @@ Template.menu_list.menus = function() {
   return this;
 }
 
-Template.menu_items.menuItems = function(){
+
+Template.menu_list.menuItems = function(){
   return this;
 }
 
-Template.menu_item.menuItem = function(){
+Template.menu_list.menuItem = function(){
   return this;
 }
-
-function getOptions(showIf) {
-  options = [
-    {showIf: 'always', text: 'always', selected: showIf == 'always'},
-    {showIf: 'auth', text: 'auth', selected: showIf == 'auth'},
-    {showIf: 'noauth', text: 'noauth', selected: showIf == 'noauth'},
-    {showIf: 'never', text: 'never', selected: showIf == 'never'}
-  ];
-  return options;
-}
-

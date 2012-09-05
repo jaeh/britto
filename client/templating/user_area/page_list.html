@@ -1,0 +1,35 @@
+<template name="page_list">  
+  {{#if user}}
+    <h2>Pages</h2>
+    {{#if pages}}
+      <table>
+        {{#each pages}}
+          <tr>
+              <td class="post-title">
+                {{#if published}}
+                <a href="/blog/{{slug}}">
+                {{/if}}
+                {{title}}
+                {{#if published}}
+                </a>
+                {{/if}}
+              </td>
+              <td class="post-author">{{postUser author}}</span>
+              <td class="post-date">{{date created}}</span>
+              <td>
+                <input class="post-edit-button btn" data-slug="{{slug}}" type="button" value="Edit" />
+                {{#if published }}
+                <input class="post-unpublish-button btn" data-id="{{_id}}" type="button" value="Unpublish" />
+                {{else}}
+                <input class="post-publish-button btn" data-id="{{_id}}" type="button" value="Publish" />
+                {{/if}}
+                <input data-id="{{_id}}" class="post-delete-button btn" type="button" value="Delete" />
+              </td>
+          </tr>
+         
+        {{/each}}
+      </table>
+    
+    {{/if}}
+  {{/if}}
+</template>

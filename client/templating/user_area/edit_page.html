@@ -1,0 +1,65 @@
+<template name="edit_page">
+  {{#if user }}
+  <div class="user_area">
+    <h2>Hi {{#with user}}{{ name }}{{/with}}!</h2>
+    <form id="post-form" class="form-horizontal" action="#">
+      <fieldset>
+        {{#with page}}
+        <legend>Make a page</legend>
+        
+        <div class="control-group">
+          <label for="post-title" class="control-label">Title</label>
+          <div class="controls"><input data-slug="post-slug" type="text" id="post-title" value="{{title}}" /></div>
+        </div>
+        
+        {{#with userlist}}
+        <div class="control-group">
+          <label for="post-author" class="control-label">Author</label>
+          <div class="controls">
+            <select id="post-author">
+              {{#each userlist}}
+              <option value="{{_id}}">{{name}}</option>
+              {{/each}}
+            </select>
+          </div>
+        </div>
+        {{/with}}
+        
+        <div class="control-group">
+          <label for="post-published" class="control-label">Publish Page:</label>
+          <div class="controls">
+            <input id="post-published" type="checkbox" {{#if published}}checked {{/if}}/>
+            <span>If date is in the future and publish is checked, the page will be published at that date</span>
+          </div>
+        </div>
+        
+        {{>date_picker}}
+        
+        <div class="control-group">
+          <label for="post-body" class="control-label">Body</label>
+          <div class="controls"><textarea id="post-body" style="width:100%; height:300px;">{{body}}</textarea></div>
+        </div>
+        
+        <div class="control-group">
+          <label for="post-slug" class="control-label">Slug</label>
+          <div class="controls"><input type="text" id="post-slug" class="change-slug" value="{{slug}}" /></div>
+        </div>
+        
+        <div class="control-group">
+          <label for="post-showcomments" class="control-label">Enable Comments:</label>
+          <div class="controls"><input id="post-showcomments" type="checkbox" {{#if showComments}}checked {{/if}}/></div>
+        </div>
+        
+        <div class="form-actions">
+          {{#if type}}
+          <input id="post-type" type="hidden" value="{{type}}" />
+          {{/if}}
+          {{#if _id}}<input id="post-id" type="hidden" value="{{_id}}" />{{/if}}
+          <button class="btn btn-primary" id="post-button">Page</button>
+        </div>
+        {{/with}}
+      </fieldset>
+    </form>
+  </div>
+  {{/if}}
+</template>
